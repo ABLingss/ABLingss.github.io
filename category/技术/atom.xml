@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>http://example.com</id>
+    <title>码农日常这一块 • Posts by &#34;技术&#34; category</title>
+    <link href="http://example.com" />
+    <updated>2024-12-10T16:00:00.000Z</updated>
+    <category term="随便聊聊" />
+    <category term="辩论" />
+    <category term="技术" />
+    <category term="创作" />
+    <category term="演讲" />
+    <entry>
+        <id>http://example.com/2024/12/11/2024-12-11-techstrack/</id>
+        <title>技术栈</title>
+        <link rel="alternate" href="http://example.com/2024/12/11/2024-12-11-techstrack/"/>
+        <content type="html">&lt;h1 id=&#34;技术栈大一上&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#技术栈大一上&#34;&gt;#&lt;/a&gt; 技术栈（大一上）&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;深度学习基础概念
+&lt;ol&gt;
+&lt;li&gt;pytorch 框架基本操作&lt;/li&gt;
+&lt;li&gt;基本库的调用&lt;/li&gt;
+&lt;li&gt;numpy pandas 的使用&lt;/li&gt;
+&lt;li&gt;可视化工具 matplotlib seaborn 的使用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;神经网络基础 mlp cnn rnn transformer 的构建和使用（来自于学习了花书和参加字节 AI 青训）
+&lt;ul&gt;
+&lt;li&gt;能够独立实现简单深度学习模型。&lt;/li&gt;
+&lt;li&gt;了解如何调试模型和提升模型性能。&lt;/li&gt;
+&lt;li&gt;了解对图像和文字进行数据预处理的方法 过拟合与欠拟合的识别与解决 学习率调整方法&lt;/li&gt;
+&lt;li&gt;会使用基本的损失函数和优化器&lt;/li&gt;
+&lt;li&gt;会基于 langchain 实现有检索和记忆功能的聊天机器人&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;工具的使用
+&lt;ol&gt;
+&lt;li&gt;能使用 Streamlit 和 Gradio 等 ui 工具部署机器学习模型&lt;/li&gt;
+&lt;li&gt;会使用 docker 部署模型&lt;/li&gt;
+&lt;li&gt;会使用 PyQT 制作简单桌面应用&lt;/li&gt;
+&lt;li&gt;会使用 sqlite3 库简单进行数据库操作&lt;/li&gt;
+&lt;li&gt;会使用 LangChain（一个 AI 工具链）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;语言能力
+&lt;ol&gt;
+&lt;li&gt;掌握 Python 的基本语法和常用库 刷了 50 道 python 算法题&lt;/li&gt;
+&lt;li&gt;掌握 C 的基本语法和数据结构的基础知识&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+        <category term="技术" />
+        <updated>2024-12-10T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>http://example.com/2024/10/05/2024-10-05-helloworld/</id>
+        <title>欢迎你！</title>
+        <link rel="alternate" href="http://example.com/2024/10/05/2024-10-05-helloworld/"/>
+        <content type="html">&lt;h1 id=&#34;欢迎你来到我的博客&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#欢迎你来到我的博客&#34;&gt;#&lt;/a&gt; 欢迎你来到我的博客&lt;/h1&gt;
+&lt;p&gt;我是 ABLing&lt;br&gt;
+ 来自 UESTC&lt;br&gt;
+ 我会在博客记录一些想法和吐槽&lt;br&gt;
+欢迎你联系我，与我一起拓宽技术栈&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <updated>2024-10-04T16:00:00.000Z</updated>
+    </entry>
+</feed>

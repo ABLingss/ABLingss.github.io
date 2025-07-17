@@ -1,0 +1,18 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "码农日常这一块 • All posts by \"技术\" tag",
+    "description": "",
+    "home_page_url": "http://example.com",
+    "items": [
+        {
+            "id": "http://example.com/2024/12/11/2024-12-11-techstrack/",
+            "url": "http://example.com/2024/12/11/2024-12-11-techstrack/",
+            "title": "技术栈",
+            "date_published": "2024-12-10T16:00:00.000Z",
+            "content_html": "<h1 id=\"技术栈大一上\"><a class=\"markdownIt-Anchor\" href=\"#技术栈大一上\">#</a> 技术栈（大一上）</h1>\n<ol>\n<li>深度学习基础概念\n<ol>\n<li>pytorch 框架基本操作</li>\n<li>基本库的调用</li>\n<li>numpy pandas 的使用</li>\n<li>可视化工具 matplotlib seaborn 的使用</li>\n</ol>\n</li>\n<li>神经网络基础 mlp cnn rnn transformer 的构建和使用（来自于学习了花书和参加字节 AI 青训）\n<ul>\n<li>能够独立实现简单深度学习模型。</li>\n<li>了解如何调试模型和提升模型性能。</li>\n<li>了解对图像和文字进行数据预处理的方法 过拟合与欠拟合的识别与解决 学习率调整方法</li>\n<li>会使用基本的损失函数和优化器</li>\n<li>会基于 langchain 实现有检索和记忆功能的聊天机器人</li>\n</ul>\n</li>\n<li>工具的使用\n<ol>\n<li>能使用 Streamlit 和 Gradio 等 ui 工具部署机器学习模型</li>\n<li>会使用 docker 部署模型</li>\n<li>会使用 PyQT 制作简单桌面应用</li>\n<li>会使用 sqlite3 库简单进行数据库操作</li>\n<li>会使用 LangChain（一个 AI 工具链）</li>\n</ol>\n</li>\n<li>语言能力\n<ol>\n<li>掌握 Python 的基本语法和常用库 刷了 50 道 python 算法题</li>\n<li>掌握 C 的基本语法和数据结构的基础知识</li>\n</ol>\n</li>\n</ol>\n",
+            "tags": [
+                "技术"
+            ]
+        }
+    ]
+}
