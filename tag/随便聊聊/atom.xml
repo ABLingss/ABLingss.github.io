@@ -4,15 +4,15 @@
     <title>ABLingss • Posts by &#34;随便聊聊&#34; tag</title>
     <link href="https://ablingss.github.io" />
     <updated>2025-03-21T16:00:00.000Z</updated>
-    <category term="随便聊聊" />
     <category term="辩论" />
+    <category term="随便聊聊" />
     <category term="创作" />
-    <category term="演讲" />
     <category term="音乐生成" />
     <category term="AIGC" />
     <category term="LLM" />
     <category term="Diffusion" />
     <category term="Review" />
+    <category term="演讲" />
     <entry>
         <id>https://ablingss.github.io/2025/03/22/2025-03-22-%E6%B4%BB%E4%B8%8B%E5%8E%BB/</id>
         <title>活下去</title>
@@ -46,17 +46,6 @@
         <category term="随便聊聊" />
         <category term="创作" />
         <updated>2025-03-19T16:00:00.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://ablingss.github.io/2025/01/24/2025-01-24-will/</id>
-        <title>心情</title>
-        <link rel="alternate" href="https://ablingss.github.io/2025/01/24/2025-01-24-will/"/>
-        <content type="html">&lt;p&gt;&lt;strong&gt;当我逼迫自己做一件事情&lt;/strong&gt;&lt;br&gt;
-&lt;strong&gt;我发现我会做的很好&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;所以考差了，你也要逼自己好起来&lt;/strong&gt;&lt;/p&gt;
-</content>
-        <category term="随便聊聊" />
-        <updated>2025-01-23T16:00:00.000Z</updated>
     </entry>
     <entry>
         <id>https://ablingss.github.io/2025/01/01/2025-01-01-happynewyear/</id>
@@ -95,33 +84,6 @@
 </content>
         <category term="随便聊聊" />
         <updated>2024-12-31T16:00:00.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://ablingss.github.io/2024/12/09/2024-12-09-wait/</id>
-        <title>A picture of soul</title>
-        <link rel="alternate" href="https://ablingss.github.io/2024/12/09/2024-12-09-wait/"/>
-        <content type="html">&lt;pre&gt;
- __      __  __                __                         ___                             
-/\ \  __/\ \/\ \              /\ \__      __             /\_ \                            
-\ \ \/\ \ \ \ \ \___      __  \ \ ,_\    /\_\    ____    \//\ \     ___   __  __     __   
- \ \ \ \ \ \ \ \  _ `\  /&#39;__`\ \ \ \/    \/\ \  /&#39;,__\     \ \ \   / __`\/\ \/\ \  /&#39;__`\ 
-  \ \ \_/ \_\ \ \ \ \ \/\ \L\.\_\ \ \_    \ \ \/\__, `\     \_\ \_/\ \L\ \ \ \_/ |/\  __/ 
-   \ `\___x___/\ \_\ \_\ \__/.\_\\ \__\    \ \_\/\____/     /\____\ \____/\ \___/ \ \____\
-    &#39;\/__//__/  \/_/\/_/\/__/\/_/ \/__/     \/_/\/___/      \/____/\/___/  \/__/   \/____/
-                                                                                          
-                                                                                        
- __  __                             __    __                  __                              
-/\ \/\ \                           /\ \__/\ \      __        /\ \      __                     
-\ \ \/&#39;/&#39;     __     __   _____    \ \ ,_\ \ \___ /\_\    ___\ \ \/&#39;\ /\_\    ___      __     
- \ \ , &lt;    /&#39;__`\ /&#39;__`\/\ &#39;__`\   \ \ \/\ \  _ `\/\ \ /&#39; _ `\ \ , &lt; \/\ \ /&#39; _ `\  /&#39;_ `\   
-  \ \ \\`\ /\  __//\  __/\ \ \L\ \   \ \ \_\ \ \ \ \ \ \/\ \/\ \ \ \\`\\ \ \/\ \/\ \/\ \L\ \  
-   \ \_\ \_\ \____\ \____\\ \ ,__/    \ \__\\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \____ \ 
-    \/_/\/_/\/____/\/____/ \ \ \/      \/__/ \/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/___L\ \
-                            \ \_\                                                      /\____/
-                             \/_/                                                      \_/__/ 
-&lt;/pre&gt;</content>
-        <category term="随便聊聊" />
-        <updated>2024-12-08T16:00:00.000Z</updated>
     </entry>
     <entry>
         <id>https://ablingss.github.io/2024/10/10/2024-10-10-feelings/</id>
