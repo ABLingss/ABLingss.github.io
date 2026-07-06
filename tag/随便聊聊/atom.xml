@@ -7,7 +7,6 @@
     <category term="随便聊聊" />
     <category term="辩论" />
     <category term="创作" />
-    <category term="技术" />
     <category term="演讲" />
     <category term="音乐生成" />
     <category term="AIGC" />
@@ -145,18 +144,5 @@
 </content>
         <category term="随便聊聊" />
         <updated>2024-10-09T16:00:00.000Z</updated>
-    </entry>
-    <entry>
-        <id>https://ablingss.github.io/2024/10/05/2024-10-05-helloworld/</id>
-        <title>欢迎你！</title>
-        <link rel="alternate" href="https://ablingss.github.io/2024/10/05/2024-10-05-helloworld/"/>
-        <content type="html">&lt;h1 id=&#34;欢迎你来到我的博客&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#欢迎你来到我的博客&#34;&gt;#&lt;/a&gt; 欢迎你来到我的博客&lt;/h1&gt;
-&lt;p&gt;我是 ABLing&lt;br&gt;
- 来自 UESTC&lt;br&gt;
- 我会在博客记录一些想法和吐槽&lt;br&gt;
-欢迎你联系我，与我一起拓宽技术栈&lt;/p&gt;
-</content>
-        <category term="随便聊聊" />
-        <updated>2024-10-04T16:00:00.000Z</updated>
     </entry>
 </feed>
