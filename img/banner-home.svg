@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">ABLingss home banner</title>
+  <desc id="desc">Academic banner with gradient, grid pattern, neural network motifs, and publication highlights.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c1829" />
+      <stop offset="50%" stop-color="#1a2d47" />
+      <stop offset="100%" stop-color="#0f1d35" />
+    </linearGradient>
+    <radialGradient id="glowA" cx="25%" cy="20%" r="40%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowB" cx="75%" cy="80%" r="35%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.20" />
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#e0e7ff" stroke-opacity="0.06" stroke-width="0.8" />
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)" />
+  <rect width="1600" height="900" fill="url(#grid)" />
+  <rect width="1600" height="900" fill="url(#glowA)" />
+  <rect width="1600" height="900" fill="url(#glowB)" />
+  <!-- Neural network node connections -->
+  <g fill="none" stroke-linecap="round" stroke-width="1.5">
+    <!-- Layer 1 to Layer 2 -->
+    <path d="M 200 350 L 440 200" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 200 450 L 440 200" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 200 450 L 440 340" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 200 550 L 440 340" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 200 550 L 440 480" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 200 650 L 440 480" stroke="#60a5fa" stroke-opacity="0.15" />
+    <!-- Layer 2 to Layer 3 -->
+    <path d="M 520 200 L 760 300" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 200 L 760 420" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 340 L 760 300" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 340 L 760 420" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 340 L 760 540" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 480 L 760 420" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 480 L 760 540" stroke="#60a5fa" stroke-opacity="0.15" />
+    <path d="M 520 480 L 760 660" stroke="#60a5fa" stroke-opacity="0.15" />
+  </g>
+  <!-- Neural network nodes -->
+  <g fill="#60a5fa" fill-opacity="0.35">
+    <!-- Input layer -->
+    <circle cx="200" cy="350" r="7" />
+    <circle cx="200" cy="450" r="7" />
+    <circle cx="200" cy="550" r="7" />
+    <circle cx="200" cy="650" r="7" />
+    <!-- Hidden layer -->
+    <circle cx="480" cy="200" r="7" />
+    <circle cx="480" cy="340" r="7" />
+    <circle cx="480" cy="480" r="7" />
+    <!-- Output layer -->
+    <circle cx="760" cy="300" r="7" />
+    <circle cx="760" cy="420" r="7" />
+    <circle cx="760" cy="540" r="7" />
+    <circle cx="760" cy="660" r="7" />
+  </g>
+  <!-- Abstract wave lines (signal / loss curves) -->
+  <g fill="none" stroke-linecap="round" stroke-width="2">
+    <path d="M 920 580 C 980 520, 1020 640, 1080 540 S 1180 620, 1240 500 S 1340 680, 1440 520" stroke="#a78bfa" stroke-opacity="0.30" />
+    <path d="M 920 630 C 980 570, 1020 690, 1080 590 S 1180 670, 1240 550 S 1340 730, 1440 570" stroke="#7dd3fc" stroke-opacity="0.20" stroke-width="1.5" />
+  </g>
+  <!-- Text annotations for academic vibe -->
+  <g fill="#e0e7ff" fill-opacity="0.12" font-family="'Courier New', monospace" font-size="22">
+    <text x="105" y="780">arXiv:2601.10547</text>
+    <text x="105" y="815">NeurIPS 2026</text>
+    <text x="105" y="850">MICCAI 2026</text>
+  </g>
+  <!-- Right-side abstract code lines -->
+  <g stroke="#ffffff" stroke-opacity="0.06" stroke-width="1">
+    <path d="M 1250 130 L 1480 130" />
+    <path d="M 1220 160 L 1460 160" />
+    <path d="M 1280 190 L 1500 190" />
+    <path d="M 1230 220 L 1470 220" />
+    <path d="M 1260 250 L 1440 250" />
+    <path d="M 1300 280 L 1490 280" />
+  </g>
+  <!-- Small matrix-like bracket -->
+  <g stroke="#e0e7ff" stroke-opacity="0.08" stroke-width="1.5" fill="none">
+    <path d="M 1100 130 L 1080 130 L 1080 290 L 1100 290" />
+    <path d="M 1500 130 L 1520 130 L 1520 290 L 1500 290" />
+  </g>
+</svg>

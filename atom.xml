@@ -1,0 +1,1626 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://ablingss.github.io</id>
+    <title>ABLingss</title>
+    <link href="https://ablingss.github.io" />
+    <updated>2026-04-12T16:00:00.000Z</updated>
+    <category term="随便聊聊" />
+    <category term="辩论" />
+    <category term="技术" />
+    <category term="创作" />
+    <category term="演讲" />
+    <category term="音乐生成" />
+    <category term="AIGC" />
+    <category term="LLM" />
+    <category term="Diffusion" />
+    <category term="Review" />
+    <entry>
+        <id>https://ablingss.github.io/2026/04/13/2026-04-13-musicgen-routes-review/</id>
+        <title>MusicGen 技术路线回顾：YuE、DiffRhythm、ACE-Step 1.5、LeVo 与 Muse</title>
+        <link rel="alternate" href="https://ablingss.github.io/2026/04/13/2026-04-13-musicgen-routes-review/"/>
+        <content type="html">&lt;p&gt;这一波开源  &lt;code&gt;musicgen&lt;/code&gt;  /  &lt;code&gt;lyrics2song&lt;/code&gt;  系统，已经不再停留在 “能不能生成出声音” 这个层面，而是开始沿着几条相当清晰的技术路线分化：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一条是 &lt;strong&gt;大语言模型式的自回归路线&lt;/strong&gt;，重点放在歌词对齐、段落结构和可控性上；&lt;/li&gt;
+&lt;li&gt;一条是 &lt;strong&gt;潜空间扩散路线&lt;/strong&gt;，更强调速度、端到端生成和简洁的推理接口；&lt;/li&gt;
+&lt;li&gt;还有一条越来越主流的 &lt;strong&gt;混合路线&lt;/strong&gt;，让 LM 负责规划，让 diffusion 或 DiT 负责高保真渲染；&lt;/li&gt;
+&lt;li&gt;再往后看，竞争焦点也已经从 “模型能不能生成” 逐渐转到了 “偏好对齐、风格控制、评测和可复现性怎么做”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这篇文章不打算逐篇复述论文，而是想回答一个更实际的问题：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;YuE、DiffRhythm、ACE-Step 1.5、LeVo 2 / SongGeneration 2、Muse，到底分别代表了 music generation 的哪条技术路线？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;为了尽量避免信息漂移，本文主要参考这些系统在 &lt;strong&gt;2026 年 4 月 13 日之前&lt;/strong&gt;公开的官方仓库、官方 README、项目页和论文摘要；其中少量 “路线归纳” 属于我基于公开材料做的总结判断，我会明确按 “我的理解” 来写。&lt;/p&gt;
+&lt;h2 id=&#34;先说结论&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#先说结论&#34;&gt;#&lt;/a&gt; 先说结论&lt;/h2&gt;
+&lt;p&gt;如果先压缩成一句话，我会这样概括：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;系统&lt;/th&gt;
+&lt;th&gt;我对它的定位&lt;/th&gt;
+&lt;th&gt;核心路线&lt;/th&gt;
+&lt;th&gt;最突出的优化目标&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;YuE&lt;/td&gt;
+&lt;td&gt;把长程歌词对齐和完整歌曲结构做扎实的开源 AR 基座&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;自回归 LM&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;长程结构、歌词一致性、ICL 风格迁移&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DiffRhythm&lt;/td&gt;
+&lt;td&gt;用最直接的潜扩散方案把 “完整歌曲” 做成又快又简单&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;潜空间扩散&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;非自回归速度、端到端、低复杂度&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ACE-Step 1.5&lt;/td&gt;
+&lt;td&gt;让 LM 当规划器、让扩散当渲染器的强工程化混合体系&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;混合架构（LM + DiT /diffusion）&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;速度、控制编辑、消费级部署&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;LeVo 2 / SongGeneration 2&lt;/td&gt;
+&lt;td&gt;在混合架构上把 “偏好对齐” 和 “商用品质” 继续推高&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;混合架构 + 多阶段对齐&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;音乐性、歌词准确率、偏好多目标优化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Muse&lt;/td&gt;
+&lt;td&gt;把 “可复现长歌生成” 这件事系统化开源&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;Qwen-based AR + MuCodec + 数据 / 评测全链路&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;可复现、细粒度风格控制、研究基础设施&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如果再说得更直白一点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;YuE&lt;/strong&gt; 代表 “把 AR 歌曲模型做深做稳”；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DiffRhythm&lt;/strong&gt; 代表 “用 latent diffusion 替代慢速的 token-by-token 解码”；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ACE-Step 1.5&lt;/strong&gt; 代表 “规划和渲染分工” 的混合体系；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LeVo 2&lt;/strong&gt; 代表 “真正把质量继续往上拉的，不只是架构，还有后训练和偏好优化”；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Muse&lt;/strong&gt; 代表 “开源音乐生成不能只放权重，还要把数据、评测和风格控制接口一起放出来”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;1-yue最典型的长程自回归歌词到歌曲路线&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#1-yue最典型的长程自回归歌词到歌曲路线&#34;&gt;#&lt;/a&gt; 1. YuE：最典型的长程自回归歌词到歌曲路线&lt;/h2&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/multimodal-art-projection/YuE/main/assets/logo/%E7%99%BD%E5%BA%95.svg&#34; alt=&#34;YuE official figure&#34; width=&#34;70%&#34;&gt;
+&lt;p&gt;YuE 的意义，不一定在于它是否绝对最强，而在于它把 &lt;strong&gt;长时长、带人声、歌词对齐的完整歌曲生成&lt;/strong&gt;，以开源 AR foundation model 的方式做成了一个足够清晰的基线。&lt;/p&gt;
+&lt;p&gt;根据官方论文摘要和仓库说明，YuE 是一套 &lt;strong&gt;基于 LLaMA2 的长程音乐基础模型&lt;/strong&gt;，目标明确指向  &lt;code&gt;lyrics2song&lt;/code&gt; 。它公开强调的几个核心技术点包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;track-decoupled next-token prediction&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;structural progressive conditioning&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;multitask, multiphase pre-training&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;重新设计过的  &lt;code&gt;in-context learning&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从官方仓库还能直接看出，它的推理是 &lt;strong&gt;两阶段&lt;/strong&gt; 的： &lt;code&gt;stage1_model&lt;/code&gt;  负责更高层的歌曲内容生成， &lt;code&gt;stage2_model&lt;/code&gt;  负责后续细化与重建；同时它支持单轨或双轨的音频 prompt，这对应的就是比较典型的 &lt;strong&gt;style transfer / continuation / ICL&lt;/strong&gt; 工作流。&lt;/p&gt;
+&lt;p&gt;我的理解是，YuE 的核心哲学其实非常明确：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;先承认歌曲生成本质上仍然是一个 &lt;strong&gt;长序列、强结构的 token 预测问题&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;再通过更好的条件设计和更强的上下文建模，把 “歌词分段、旋律推进、伴奏协同” 这些问题尽量压进 AR 框架里解决。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这条路线的优点也很直观：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;歌词和段落结构通常更容易 “讲清楚”；&lt;/li&gt;
+&lt;li&gt;文字条件、音频条件、双轨提示都比较自然；&lt;/li&gt;
+&lt;li&gt;风格迁移、续写、分段生成这类能力，和 LM 的条件建模天然兼容。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但它的代价同样明显：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;推理慢&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;长序列带来的显存压力大；&lt;/li&gt;
+&lt;li&gt;结构组织虽然强，但在声学细节和采样效率上天然不占便宜。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以在这一波系统里，YuE 更像是一个 &lt;strong&gt;“AR 基准派”&lt;/strong&gt;：它证明了开源模型完全可以把完整歌曲做出来，而且在歌词对齐和长程组织上依然有很强的竞争力。&lt;/p&gt;
+&lt;h2 id=&#34;2-diffrhythm把完整歌曲问题改写成潜空间扩散&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#2-diffrhythm把完整歌曲问题改写成潜空间扩散&#34;&gt;#&lt;/a&gt; 2. DiffRhythm：把完整歌曲问题改写成潜空间扩散&lt;/h2&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/ASLP-lab/DiffRhythm/main/src/diffrhythm.jpg&#34; alt=&#34;DiffRhythm official figure&#34; width=&#34;100%&#34;&gt;
+&lt;p&gt;如果说 YuE 代表的是 “把 AR 做好”，那 DiffRhythm 代表的就是另一种思路：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;既然自回归太慢，那就不要再按 token 一个一个往外吐，直接上 latent diffusion。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;官方论文摘要和 README 对它的定位写得很直接：它是第一个能够做 &lt;strong&gt;full-length song generation&lt;/strong&gt; 的开源 &lt;strong&gt;latent diffusion&lt;/strong&gt; 歌曲系统，而且重点强调三件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生成 &lt;strong&gt;完整歌曲&lt;/strong&gt;，时长可以到  &lt;code&gt;4m45s&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;推理只需要 &lt;strong&gt;lyrics + style prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;整体结构是 &lt;strong&gt;non-autoregressive&lt;/strong&gt;，因此速度很快&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它最有代表性的表述反而不是 “结构有多复杂”，而是：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;simple and elegant&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;换句话说，就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不依赖特别繁琐的数据管线；&lt;/li&gt;
+&lt;li&gt;模型结构尽量直接；&lt;/li&gt;
+&lt;li&gt;推理接口尽量简单；&lt;/li&gt;
+&lt;li&gt;用潜空间扩散把完整歌曲一次性生成出来。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这条路线的价值很大，因为它真正回答了一个工程问题：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;歌曲生成能不能像图像生成那样，进入 “高吞吐、低交互成本、接口相对统一” 的阶段？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;DiffRhythm 给出的答案是：可以，至少这个方向是可行的。&lt;/p&gt;
+&lt;p&gt;和 YuE 这种 AR 路线相比，DiffRhythm 的特点很鲜明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;速度更快&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;推理形式更直接&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;对最终音频的整体渲染更像一次性采样&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但扩散路线的老问题也会随之出现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;长程结构控制没有 AR 那么 “离散、显式”；&lt;/li&gt;
+&lt;li&gt;歌词对齐和段落一致性往往需要更小心的设计；&lt;/li&gt;
+&lt;li&gt;如果没有更强的规划器，模型在 “整首歌的组织力” 上容易输给 LM 路线。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以在技术谱系里，DiffRhythm 很像一个关键拐点：&lt;/p&gt;
+&lt;p&gt;它不是沿着 YuE 的路线继续卷参数，而是直接切换建模范式，告诉大家完整歌曲生成并不一定要坚持纯 AR。&lt;/p&gt;
+&lt;h2 id=&#34;3-ace-step-15规划交给-lm渲染交给-dit&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#3-ace-step-15规划交给-lm渲染交给-dit&#34;&gt;#&lt;/a&gt; 3. ACE-Step 1.5：规划交给 LM，渲染交给 DiT&lt;/h2&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/ace-step/ACE-Step/main/assets/application_map.png&#34; alt=&#34;ACE-Step official figure&#34; width=&#34;100%&#34;&gt;
+&lt;p&gt;ACE-Step 初版就在做一件很明确的事：&lt;strong&gt;桥接 AR 和 diffusion 的优缺点&lt;/strong&gt;。官方技术报告对问题的表述也相当清楚：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LLM 路线歌词对齐强，但速度慢，而且容易出现结构伪影；&lt;/li&gt;
+&lt;li&gt;扩散路线速度快，但长程一致性偏弱。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它给出的答案包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用  &lt;code&gt;DCAE&lt;/code&gt;  压缩音频表示&lt;/li&gt;
+&lt;li&gt;用轻量  &lt;code&gt;linear transformer&lt;/code&gt;  / LM 处理更高层的组织&lt;/li&gt;
+&lt;li&gt;用扩散式生成器保证高保真音频重建&lt;/li&gt;
+&lt;li&gt;用  &lt;code&gt;MERT&lt;/code&gt;  和  &lt;code&gt;m-hubert&lt;/code&gt;  做语义对齐训练&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;到了 &lt;strong&gt;ACE-Step 1.5&lt;/strong&gt;，这条思路进一步成熟。根据 2026 年 1 月 31 日公开的 v1.5 技术报告摘要，ACE-Step 1.5 的核心已经变成一个更明确的 &lt;strong&gt;hybrid planner-renderer architecture&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;LM 作为 omni-capable planner&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;把用户查询扩展成更完整的 song blueprint&lt;/li&gt;
+&lt;li&gt;通过  &lt;code&gt;Chain-of-Thought&lt;/code&gt;  生成 metadata、lyrics、captions 等中间结构&lt;/li&gt;
+&lt;li&gt;再去引导  &lt;code&gt;Diffusion Transformer (DiT)&lt;/code&gt;  完成音频生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这其实是当前 musicgen 里非常值得重视的一种范式：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LM 负责 “想清楚”，扩散负责 “做漂亮”。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;也就是说，ACE-Step 1.5 不再把 LM 直接当成最终声码器，而是把它放回更像 &lt;strong&gt;作曲规划器 / 条件展开器 / 结构编排器&lt;/strong&gt; 的位置。这一步很关键，因为它让系统同时拿到了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LM 的结构组织能力&lt;/li&gt;
+&lt;li&gt;Diffusion / DiT 的高保真渲染能力&lt;/li&gt;
+&lt;li&gt;更快的非自回归推理速度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;官方材料里，ACE-Step 1.5 还特别强调了这些工程属性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;全曲生成速度极快&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;低显存可本地部署&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;支持 &lt;strong&gt;LoRA 个性化&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;支持 &lt;strong&gt;cover、repainting、vocal-to-BGM、lyric editing&lt;/strong&gt; 等编辑能力&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以我会把 ACE-Step 1.5 看成目前最典型的 &lt;strong&gt;“音乐版 planner + renderer 分层系统”&lt;/strong&gt;。它已经不再把 “模型主体” 理解成单一解码器，而是把它视为一个由规划、条件展开、渲染和编辑组成的整体工作流。&lt;/p&gt;
+&lt;h2 id=&#34;4-levo-2-songgeneration-2混合架构之外更关键的是多阶段偏好对齐&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#4-levo-2-songgeneration-2混合架构之外更关键的是多阶段偏好对齐&#34;&gt;#&lt;/a&gt; 4. LeVo 2 / SongGeneration 2：混合架构之外，更关键的是多阶段偏好对齐&lt;/h2&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/tencent-ailab/SongGeneration/main/img/over.jpg&#34; alt=&#34;SongGeneration official figure&#34; width=&#34;100%&#34;&gt;
+&lt;p&gt;这里先把名字讲清楚。&lt;/p&gt;
+&lt;p&gt;你提到的  &lt;code&gt;LeVo&lt;/code&gt; ，在目前公开代码里已经演化成 &lt;strong&gt;LeVo 2 / SongGeneration 2&lt;/strong&gt;。截至 &lt;strong&gt;2026 年 3 月 1 日&lt;/strong&gt;，官方 README 的最新说法是：他们开源的是  &lt;code&gt;SongGeneration-v2-large&lt;/code&gt; ，并把它定义为追求 &lt;strong&gt;commercial-grade generation&lt;/strong&gt; 的开源音乐基础模型。&lt;/p&gt;
+&lt;p&gt;这条路线最值得看的地方，不只是 “混合架构” 本身，而是它把 &lt;strong&gt;架构设计&lt;/strong&gt; 和 &lt;strong&gt;后训练对齐&lt;/strong&gt; 两边都搭成了完整体系。&lt;/p&gt;
+&lt;p&gt;在模型结构上，官方 README 给出的分工非常明确：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Hybrid LLM-Diffusion Architecture&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LeLM&lt;/strong&gt; 作为 “Composer Brain”&lt;/li&gt;
+&lt;li&gt;Diffusion 作为 “Hi-Fi Renderer”&lt;/li&gt;
+&lt;li&gt;再加一个 &lt;strong&gt;Hierarchical Language Model&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而这个 hierarchical LM 又继续区分了两种 token：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Mixed Tokens&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Dual-Track Tokens&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这和 LeVo 旧版论文里描述的路线是一致的：一部分 token 抓高层语义和整体结构，另一部分 token 并行建模人声与伴奏的精细关系。它本质上是在回答一个很核心的问题：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;歌曲不是普通的单流音频，它天然就有 “混音整体” 和 “分轨细节” 两层表示，能不能把这两层都建模？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;LeVo / SongGeneration 给出的答案是：&lt;strong&gt;可以，而且应该并行建模。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;但更重要的是它的训练策略。SongGeneration 2 在官方 README 里明确把提升重点放在一个三阶段后训练流程上：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;SFT&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Large-scale Offline DPO&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Semi-online DPO&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这说明它并不满足于 “把模型训出来”，而是把竞争重点放在：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;怎么减少 lyrical hallucination&lt;/li&gt;
+&lt;li&gt;怎么提升 musicality&lt;/li&gt;
+&lt;li&gt;怎么在多维偏好上做统一优化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;官方还特别强调了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;PER = 8.55&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;多语言歌词支持&lt;/li&gt;
+&lt;li&gt;更接近商业系统的整体质量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我的理解是，LeVo 2 / SongGeneration 2 代表的是一种更成熟的工业化路线：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;架构上承认混合模型更合理；&lt;/li&gt;
+&lt;li&gt;表示层上承认 mixed /dual-track 需要同时建模；&lt;/li&gt;
+&lt;li&gt;训练上承认真正的差距，很多时候来自 &lt;strong&gt;偏好优化和后训练数据构造&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，LeVo 的关键贡献不只是 “模型怎么搭”，而是：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;高质量歌曲生成最后拼的，往往很大程度上就是 alignment pipeline。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;5-muse把可复现-风格控制和评测全链路一起开源&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#5-muse把可复现-风格控制和评测全链路一起开源&#34;&gt;#&lt;/a&gt; 5. Muse：把可复现、风格控制和评测全链路一起开源&lt;/h2&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/yuhui1038/Muse/main/assets/intro.jpg&#34; alt=&#34;Muse official figure&#34; width=&#34;100%&#34;&gt;
+&lt;p&gt;Muse 是这几套系统里，我觉得最偏 “研究基础设施导向” 的一个。&lt;/p&gt;
+&lt;p&gt;它关注的问题不是 “我要不要比谁快 20%”，而更像是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;既然很多商业长歌系统很强，但学术界很难复现，那能不能把训练数据、训练流程、评测流程和模型本身一起开放出来？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;官方 README 和论文摘要给出的信息很清楚：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Muse 面向 &lt;strong&gt;long-form song generation&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;支持 &lt;strong&gt;fine-grained style conditioning&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;放出了 &lt;strong&gt;116k fully licensed synthetic songs&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;Qwen-based language model&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;用  &lt;code&gt;MuCodec&lt;/code&gt;  把音频离散成 audio tokens&lt;/li&gt;
+&lt;li&gt;训练上采用 &lt;strong&gt;single-stage supervised finetuning&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;不依赖 task-specific loss、auxiliary objective 或额外复杂结构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这条路线很有意思，因为它没有像 ACE-Step 或 LeVo 那样把 “混合架构” 作为最大卖点，而更像是在说：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;先把一条足够干净、足够可复现、足够可控的 AR song generation pipeline 搭完整。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;从技术气质上看，Muse 更接近：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基于强文本 LM 的统一序列建模&lt;/li&gt;
+&lt;li&gt;在输入里显式放入全局风格标签、分段风格描述和歌词&lt;/li&gt;
+&lt;li&gt;用 segment-level 条件实现更细粒度的控制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此它的贡献重点更偏向三件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;研究可复现&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;风格条件设计&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;公开评测与数据流程&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以如果说 YuE 是 “AR 路线的强生成器”，那 Muse 更像 “AR 路线的可复现研究平台”。两者并不对立，只是关注点不同：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;YuE 更强调生成能力的上限；&lt;/li&gt;
+&lt;li&gt;Muse 更强调整个研究闭环是否对社区开放。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;五条路线真正的分野在哪里&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#五条路线真正的分野在哪里&#34;&gt;#&lt;/a&gt; 五条路线真正的分野在哪里&lt;/h2&gt;
+&lt;p&gt;把这几套系统放在一起看，我觉得它们真正的分野，可以归结为四个问题。&lt;/p&gt;
+&lt;h3 id=&#34;1-谁来负责长程结构&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#1-谁来负责长程结构&#34;&gt;#&lt;/a&gt; 1. 谁来负责长程结构？&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;YuE / Muse&lt;/strong&gt; 更偏向让自回归 LM 直接承担长程结构组织；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DiffRhythm&lt;/strong&gt; 让扩散模型直接处理整首歌的生成；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ACE-Step / LeVo&lt;/strong&gt; 则更倾向于把结构规划单独抽出来，让 LM 先生成 blueprint，再由扩散或 DiT 去渲染。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这也是为什么我会觉得混合路线会越来越主流：&lt;br&gt;
+LM 确实更适合 “组织”，扩散也确实更适合 “渲染”。&lt;/p&gt;
+&lt;h3 id=&#34;2-谁来保证人声与伴奏的协同&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#2-谁来保证人声与伴奏的协同&#34;&gt;#&lt;/a&gt; 2. 谁来保证人声与伴奏的协同？&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;YuE 通过更强的条件建模和分轨 / 双轨 ICL 去做；&lt;/li&gt;
+&lt;li&gt;DiffRhythm 通过端到端 latent diffusion 直接联合建模；&lt;/li&gt;
+&lt;li&gt;LeVo 把这个问题显式拆成  &lt;code&gt;mixed tokens + dual-track tokens&lt;/code&gt; ；&lt;/li&gt;
+&lt;li&gt;ACE-Step 则更像是在 blueprint 到 audio 的多阶段过程中处理它。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里 LeVo 的想法尤其有代表性：&lt;br&gt;
+&lt;strong&gt;歌曲不是单流 audio，而是天然带有多层表示。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;3-谁最重视偏好对齐&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#3-谁最重视偏好对齐&#34;&gt;#&lt;/a&gt; 3. 谁最重视 “偏好对齐”？&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;YuE 的重点更偏 foundation model 的建模设计；&lt;/li&gt;
+&lt;li&gt;DiffRhythm 初代更偏建模范式切换；&lt;/li&gt;
+&lt;li&gt;ACE-Step 已经明显把编辑和控制能力纳入统一框架；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LeVo 2 / SongGeneration 2&lt;/strong&gt; 则把  &lt;code&gt;DPO + 多阶段 alignment&lt;/code&gt;  放到了系统核心；&lt;/li&gt;
+&lt;li&gt;Muse 更像是从数据和评测基础设施入手，去保证比较公平、可复现。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;换句话说，LeVo 代表的是一种 “后训练时代” 的思路：&lt;br&gt;
+&lt;strong&gt;模型本体只是上半场，alignment 才是下半场。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;4-谁最像真正能落地的产品底座&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#4-谁最像真正能落地的产品底座&#34;&gt;#&lt;/a&gt; 4. 谁最像真正能落地的产品底座？&lt;/h3&gt;
+&lt;p&gt;从目前公开信息看：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;DiffRhythm&lt;/strong&gt; 最像 “轻量、快、上手简单” 的扩散产品底座；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ACE-Step 1.5&lt;/strong&gt; 最像 “功能全面、可编辑、消费级部署友好” 的创作工作流底座；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LeVo 2&lt;/strong&gt; 最像 “朝商用品质逼近” 的系统化方案；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;YuE&lt;/strong&gt; 更像强生成能力的开源里程碑；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Muse&lt;/strong&gt; 更像可复现研究平台。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它们并不是同一个维度上的 “谁替代谁”，而是分别站在：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;研究基线&lt;/li&gt;
+&lt;li&gt;范式切换&lt;/li&gt;
+&lt;li&gt;混合架构&lt;/li&gt;
+&lt;li&gt;偏好优化&lt;/li&gt;
+&lt;li&gt;开源复现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这五个不同重心上。&lt;/p&gt;
+&lt;h2 id=&#34;我自己的判断&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#我自己的判断&#34;&gt;#&lt;/a&gt; 我自己的判断&lt;/h2&gt;
+&lt;p&gt;如果只看未来一两代系统的主流方向，我的判断是：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;纯 AR 不会消失，但 “LM 负责规划，扩散负责渲染” 的混合路线，大概率会成为开源 full-song generation 的主轴。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;原因并不复杂：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;纯 AR 在歌词对齐和结构控制上依然强；&lt;/li&gt;
+&lt;li&gt;纯扩散在速度和高保真渲染上天然有优势；&lt;/li&gt;
+&lt;li&gt;混合系统最有机会同时拿到两边的好处。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而在混合系统内部，接下来的竞争点，大概率会继续往这几个方向收敛：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更细的分轨 / 中间表示设计&lt;/li&gt;
+&lt;li&gt;更强的 segment-level planning&lt;/li&gt;
+&lt;li&gt;更系统的 preference alignment&lt;/li&gt;
+&lt;li&gt;更低成本的本地部署和 LoRA 个性化&lt;/li&gt;
+&lt;li&gt;更公开、可复现的数据与评测基准&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也正因为如此，把这几篇工作放在一起看才有意思：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;YuE&lt;/strong&gt; 告诉我们 AR 歌曲 foundation model 可以做到什么；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DiffRhythm&lt;/strong&gt; 告诉我们 full-song generation 不一定非得坚持 AR；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ACE-Step 1.5&lt;/strong&gt; 告诉我们规划和渲染分层是一条很强的工程路线；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LeVo 2&lt;/strong&gt; 告诉我们 alignment pipeline 可能比单纯换 backbone 更重要；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Muse&lt;/strong&gt; 告诉我们，一个健康的研究生态还需要数据、评测和复现闭环。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这五条路线，基本构成了当前开源 musicgen 最值得关注的一张技术地图。&lt;/p&gt;
+&lt;h2 id=&#34;补充从-uniaudio-到-heartmula-heartlib这条路径到底在做什么&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#补充从-uniaudio-到-heartmula-heartlib这条路径到底在做什么&#34;&gt;#&lt;/a&gt; 补充：从 UniAudio 到 HeartMuLa /heartlib，这条路径到底在做什么&lt;/h2&gt;
+&lt;p&gt;这一节我想单独展开一下  &lt;code&gt;https://github.com/HeartMuLa/heartlib&lt;/code&gt; ，因为它背后的技术路径其实非常有代表性：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;它不是凭空冒出来的一套音乐系统，而是可以相当清楚地追溯到 UniAudio 那条 “统一离散 token 建模” 路线。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如果用一句话概括这条演化链，我会这样说：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;UniAudio 先提出 “把不同音频任务都变成统一 token 序列，让一个模型去做”；HeartMuLa 则把这个思想从 “通用音频框架” 收缩并强化成 “面向音乐的专用 foundation model + 专用 codec + 专用工具链”。&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;下面按逻辑一层一层展开。&lt;/p&gt;
+&lt;h3 id=&#34;1-起点为什么是-uniaudio&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#1-起点为什么是-uniaudio&#34;&gt;#&lt;/a&gt; 1. 起点为什么是 UniAudio&lt;/h3&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/yangdongchao/UniAudio/main/fig/model.png&#34; alt=&#34;UniAudio official figure&#34; width=&#34;100%&#34;&gt;
+&lt;p&gt;UniAudio 的核心目标，从名字就能看出来：&lt;br&gt;
+&lt;strong&gt;Universal Audio Generation&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;它想解决的不是某一个单独任务，而是一整类任务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TTS&lt;/li&gt;
+&lt;li&gt;VC&lt;/li&gt;
+&lt;li&gt;Singing voice synthesis&lt;/li&gt;
+&lt;li&gt;Text-to-sound&lt;/li&gt;
+&lt;li&gt;Text-to-music&lt;/li&gt;
+&lt;li&gt;Audio editing&lt;/li&gt;
+&lt;li&gt;Speech enhancement&lt;/li&gt;
+&lt;li&gt;以及其他音频生成 / 变换任务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;UniAudio 最关键的地方，不是某个具体 backbone，而是它对任务的 &lt;strong&gt;抽象方式&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;官方 README 把流程写得很直白，整个框架分成四步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;define your task&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prepare data&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tokenize data and save it as .pth&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;training and inference&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这四步看起来很普通，但背后其实定义了 UniAudio 的方法论：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;面对任何音频任务，先不要急着单独写一个模型，而是先把它规整成统一的数据格式。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;2-uniaudio-的真正核心任务先被定义成字段顺序&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#2-uniaudio-的真正核心任务先被定义成字段顺序&#34;&gt;#&lt;/a&gt; 2. UniAudio 的真正核心：任务先被定义成 “字段顺序”&lt;/h3&gt;
+&lt;p&gt;UniAudio 仓库里最值得看的文件之一是  &lt;code&gt;UniAudio/utils/task_definition.py&lt;/code&gt; 。&lt;br&gt;
+它在这里定义的不是网络结构，而是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个任务有哪些字段&lt;/li&gt;
+&lt;li&gt;每个字段属于什么类型&lt;/li&gt;
+&lt;li&gt;哪个字段是目标&lt;/li&gt;
+&lt;li&gt;在 encoder-decoder 或 decoder-only 场景下，这些字段应该怎么排列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;README 里给的 TTS 例子，本质上就是：&lt;/p&gt;
+&lt;figure class=&#34;highlight python&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs python&#34;&gt;tts_format = &amp;#123;&lt;br&gt;    &lt;span class=&#34;hljs-string&#34;&gt;&amp;#x27;keys&amp;#x27;&lt;/span&gt;: [&lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;phone_seq&amp;quot;&lt;/span&gt;, &lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;prompt_seq&amp;quot;&lt;/span&gt;, &lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;audio_seq&amp;quot;&lt;/span&gt;],&lt;br&gt;    &lt;span class=&#34;hljs-string&#34;&gt;&amp;#x27;type&amp;#x27;&lt;/span&gt;: [&lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;phone&amp;quot;&lt;/span&gt;, &lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;audio_prompt&amp;quot;&lt;/span&gt;, &lt;span class=&#34;hljs-string&#34;&gt;&amp;quot;audio&amp;quot;&lt;/span&gt;],&lt;br&gt;    &lt;span class=&#34;hljs-string&#34;&gt;&amp;#x27;features&amp;#x27;&lt;/span&gt;: [],&lt;br&gt;    &lt;span class=&#34;hljs-string&#34;&gt;&amp;#x27;loss_key&amp;#x27;&lt;/span&gt;: &lt;span class=&#34;hljs-string&#34;&gt;&amp;#x27;audio_seq&amp;#x27;&lt;/span&gt;,&lt;br&gt;&amp;#125;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这个定义非常关键，因为它直接说明了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;phone_seq&lt;/code&gt;  是条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prompt_seq&lt;/code&gt;  是条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;audio_seq&lt;/code&gt;  是目标&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;随后 dataloader 会按照任务定义把这些字段拼起来，组成 &lt;strong&gt;单一序列&lt;/strong&gt;，再交给同一个模型去处理。&lt;/p&gt;
+&lt;p&gt;这是 UniAudio 最 “基础模型化” 的地方。&lt;br&gt;
+它不是把逻辑写死成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;“这是 TTS 模型”&lt;/li&gt;
+&lt;li&gt;“这是 VC 模型”&lt;/li&gt;
+&lt;li&gt;“这是歌声模型”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而是先统一抽象成：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;一串离散 token，前面是条件，后面是待预测的目标。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;3-uniaudio-是怎么把不同模态揉进一个词表的&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#3-uniaudio-是怎么把不同模态揉进一个词表的&#34;&gt;#&lt;/a&gt; 3. UniAudio 是怎么把不同模态揉进一个词表的&lt;/h3&gt;
+&lt;p&gt;另一个关键文件是  &lt;code&gt;UniAudio/utils/dataloader.py&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;它主要做了几件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;为不同数据类型构造 tokenizer&lt;/li&gt;
+&lt;li&gt;给不同类型分配各自的 token 区间&lt;/li&gt;
+&lt;li&gt;建立  &lt;code&gt;type_bias&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;把各种离散 token 映射进统一 vocabulary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;audio&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;audio_prompt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;phone&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;text&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;semantic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;text_t5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sing_phone&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sing_midi&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些都可以共存在同一个统一词表里。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;type_bias&lt;/code&gt;  这个设计尤其关键。可以粗略理解成：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;同一个原始 token id，进入不同模态空间时，要加上不同偏置，避免彼此冲突。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;所以 UniAudio 最终喂给模型的，不再是 “原始 phone token” 或者 “原始 codec token”，而是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;加过类型偏移后的统一 token&lt;/li&gt;
+&lt;li&gt;配上  &lt;code&gt;&amp;lt;audio_start&amp;gt;&lt;/code&gt; 、 &lt;code&gt;&amp;lt;text_start&amp;gt;&lt;/code&gt;  这类 special token&lt;/li&gt;
+&lt;li&gt;再按任务格式拼成一个长序列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此，UniAudio 的本质不只是 “一个音频大模型”，而更像是：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;一个统一 token 编排系统 + 一个统一序列建模器。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;4-uniaudio-的模型抽象把问题尽量改写成大语言模型问题&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#4-uniaudio-的模型抽象把问题尽量改写成大语言模型问题&#34;&gt;#&lt;/a&gt; 4. UniAudio 的模型抽象：把问题尽量改写成大语言模型问题&lt;/h3&gt;
+&lt;p&gt;UniAudio 的  &lt;code&gt;train.py&lt;/code&gt;  和  &lt;code&gt;model.py&lt;/code&gt;  把这件事说明得更清楚。&lt;/p&gt;
+&lt;p&gt;训练时它做的是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;先通过  &lt;code&gt;get_data_iterator_tokenizer_vocabulary(...)&lt;/code&gt;  拿到 tokenized 数据&lt;/li&gt;
+&lt;li&gt;再构造  &lt;code&gt;MegaByteModel&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;最后统一做 next-token prediction /cross-entropy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里的  &lt;code&gt;MegaByteModel&lt;/code&gt;  很有意思。它不是普通 decoder-only LM，而更像一个 “全局 + 局部” 的层级解码器：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;g_emb / g_layers / g_ln&lt;/code&gt;  负责全局层&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;l_emb / l_layers / l_ln&lt;/code&gt;  负责局部层&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;背后的直觉是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有些 token 的结构更接近 “帧级” 或 “块级” 组织；&lt;/li&gt;
+&lt;li&gt;有些 token 需要更细粒度的局部建模。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这也是 UniAudio 面对音频这种高频长序列还能勉强处理的原因：&lt;br&gt;
+它不是完全平铺，而是做了层级化 token 组织。&lt;/p&gt;
+&lt;p&gt;再加上  &lt;code&gt;attention_mask(loss_mask, prefix_lm=True)&lt;/code&gt;  这种前缀条件掩码机制，UniAudio 就能支持：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;前缀全部可见&lt;/li&gt;
+&lt;li&gt;目标段做因果预测&lt;/li&gt;
+&lt;li&gt;padding 完全屏蔽&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;于是整套系统就成立了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数据先被定义成统一格式&lt;/li&gt;
+&lt;li&gt;不同模态再被统一成离散 token&lt;/li&gt;
+&lt;li&gt;token 被拼成一个长序列&lt;/li&gt;
+&lt;li&gt;一个大模型对目标段执行条件生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这就是 UniAudio 的第一性原理。&lt;/p&gt;
+&lt;h3 id=&#34;5-但-uniaudio-的问题也很明显它太通用了&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#5-但-uniaudio-的问题也很明显它太通用了&#34;&gt;#&lt;/a&gt; 5. 但 UniAudio 的问题也很明显：它太 “通用” 了&lt;/h3&gt;
+&lt;p&gt;UniAudio 的强项是抽象足够统一，但代价也很清楚：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;任务太多，整个系统更像研究框架，不像音乐产品栈；&lt;/li&gt;
+&lt;li&gt;音乐只是它支持的任务之一，而不是唯一中心；&lt;/li&gt;
+&lt;li&gt;codec、文本条件、语义条件、任务定义都是通用抽象，并不是专门为歌曲设计；&lt;/li&gt;
+&lt;li&gt;对 “人声 + 伴奏 + 长歌结构 + 歌词控制” 这些音乐专属问题，优化不会那么极致。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;换句话说，UniAudio 回答的是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;能不能用一个统一 token 框架去覆盖很多音频任务？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;而 HeartMuLa 真正要回答的问题已经变成：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果我只做音乐，而且重点是 lyrics-conditioned long-form music generation，那整个系统应该怎么重新收紧？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这就是从 UniAudio 到 HeartMuLa 的关键转折。&lt;/p&gt;
+&lt;h3 id=&#34;6-heartmula-不是继续通用化而是音乐特化&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#6-heartmula-不是继续通用化而是音乐特化&#34;&gt;#&lt;/a&gt; 6. HeartMuLa 不是 “继续通用化”，而是 “音乐特化”&lt;/h3&gt;
+&lt;p&gt;HeartMuLa 官方自己就把系统拆成了四块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HeartMuLa&lt;/code&gt; ：音乐语言模型&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HeartCodec&lt;/code&gt; ：音乐 codec&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HeartTranscriptor&lt;/code&gt; ：歌词转写&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HeartCLAP&lt;/code&gt; ：音频 - 文本对齐&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这说明它和 UniAudio 的路线已经明显不同。&lt;/p&gt;
+&lt;p&gt;UniAudio 更像：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个通用音频建模框架&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;HeartMuLa /heartlib 更像：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个面向音乐工作流的 &lt;strong&gt;专用技术栈&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，HeartMuLa 并没有沿着 UniAudio 的 “任务大全” 姿态继续扩张，而是保留了最重要的那部分思想：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;离散 token 统一建模&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;然后围绕 “音乐生成” 重新搭了一套更窄、更深、也更工程化的系统。&lt;/p&gt;
+&lt;h3 id=&#34;7-heartlib-的接口为什么看起来比-uniaudio-简单很多&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#7-heartlib-的接口为什么看起来比-uniaudio-简单很多&#34;&gt;#&lt;/a&gt; 7. heartlib 的接口为什么看起来比 UniAudio 简单很多&lt;/h3&gt;
+&lt;p&gt;如果直接看  &lt;code&gt;heartlib&lt;/code&gt;  的使用入口，会感觉它比 UniAudio “收缩” 了很多。&lt;/p&gt;
+&lt;p&gt;最直接的入口是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;examples/run_music_generation.py&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/heartlib/pipelines/music_generation.py&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用户传进去的参数其实很少：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;lyrics&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tags&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;model_path&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;一些采样参数，比如  &lt;code&gt;topk&lt;/code&gt; 、 &lt;code&gt;temperature&lt;/code&gt; 、 &lt;code&gt;cfg_scale&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;和 UniAudio 相比，它少了很多：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;task json&lt;/li&gt;
+&lt;li&gt;wav.scp&lt;/li&gt;
+&lt;li&gt;phone.scp&lt;/li&gt;
+&lt;li&gt;utt2spk&lt;/li&gt;
+&lt;li&gt;离线 tokenization pipeline&lt;/li&gt;
+&lt;li&gt;task-specific formatter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这不是因为 HeartMuLa 更 “简陋”，恰恰相反，是因为它已经把任务空间大幅压缩了：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;它默认做的，就是歌词 + tags 到音乐。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;也就是说，UniAudio 里原本由任务定义系统显式处理的那一层，在 HeartMuLa 里已经被固化进 pipeline 本身。&lt;/p&gt;
+&lt;h3 id=&#34;8-heartlib-的生成入口本质上是两段式&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#8-heartlib-的生成入口本质上是两段式&#34;&gt;#&lt;/a&gt; 8. heartlib 的生成入口，本质上是两段式&lt;/h3&gt;
+&lt;p&gt;从  &lt;code&gt;HeartMuLaGenPipeline&lt;/code&gt;  的代码来看，整条推理链非常清楚：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先定位模型路径&lt;/li&gt;
+&lt;li&gt;加载  &lt;code&gt;HeartMuLa&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;加载  &lt;code&gt;HeartCodec&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;加载  &lt;code&gt;tokenizer.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;加载  &lt;code&gt;gen_config.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;预处理  &lt;code&gt;tags&lt;/code&gt;  和  &lt;code&gt;lyrics&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;让  &lt;code&gt;HeartMuLa&lt;/code&gt;  逐帧生成离散 music tokens&lt;/li&gt;
+&lt;li&gt;再让  &lt;code&gt;HeartCodec&lt;/code&gt;  把 tokens 还原成波形&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这和 UniAudio 很大的区别之一在于：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;UniAudio 里的  &lt;code&gt;tokenizer / dataloader / model / detokenizer&lt;/code&gt;  是统一框架中的通用流程；HeartMuLa 则把这条路径直接产品化成了固定 pipeline。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;9-heartmula-的输入组织方式9-路并行-token&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#9-heartmula-的输入组织方式9-路并行-token&#34;&gt;#&lt;/a&gt; 9. HeartMuLa 的输入组织方式：9 路并行 token&lt;/h3&gt;
+&lt;p&gt;这里是我觉得最值得细看的地方。&lt;/p&gt;
+&lt;p&gt;在  &lt;code&gt;music_generation.py&lt;/code&gt;  里，有两个常量很关键：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;self._parallel_number = 8 + 1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;self._muq_dim = 512&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这几乎已经把系统的 token 组织方式直接写出来了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;前  &lt;code&gt;8&lt;/code&gt;  路是音频 codebooks&lt;/li&gt;
+&lt;li&gt;最后  &lt;code&gt;1&lt;/code&gt;  路是文本通道&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，HeartMuLa 不是把文本和音频完全摊平成同一条 1D 序列，而是把每个时间步组织成一个二维小块：&lt;/p&gt;
+&lt;figure class=&#34;highlight text&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs text&#34;&gt;[audio_codebook_0,&lt;br&gt; audio_codebook_1,&lt;br&gt; ...&lt;br&gt; audio_codebook_7,&lt;br&gt; text_token]&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;在  &lt;code&gt;preprocess()&lt;/code&gt;  里，这个结构会被明确构造出来：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tokens&lt;/code&gt;  的 shape 是  &lt;code&gt;[prompt_len, 9]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;最后一列放文本 token&lt;/li&gt;
+&lt;li&gt;前八列初始为空，后续由模型生成音频 token&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这比 UniAudio 那种统一拼接更 “音乐专用”。&lt;/p&gt;
+&lt;p&gt;UniAudio 的逻辑更接近：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;先把多模态信息顺序拼起来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;HeartMuLa 的逻辑则更接近：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;以 “时间帧” 为核心单位&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;在每个时间帧里并排组织多 codebook 音频 token 和文本条件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这是一个非常大的设计转向。&lt;/p&gt;
+&lt;h3 id=&#34;10-tags-和-lyrics-在-heartmula-里是怎么进模型的&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#10-tags-和-lyrics-在-heartmula-里是怎么进模型的&#34;&gt;#&lt;/a&gt; 10. tags 和 lyrics 在 HeartMuLa 里是怎么进模型的&lt;/h3&gt;
+&lt;p&gt;预处理阶段大致会做这些事：&lt;/p&gt;
+&lt;h4 id=&#34;tags&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#tags&#34;&gt;#&lt;/a&gt;  &lt;code&gt;tags&lt;/code&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;如果  &lt;code&gt;tags&lt;/code&gt;  是文件路径，就先读文件&lt;/li&gt;
+&lt;li&gt;转成小写&lt;/li&gt;
+&lt;li&gt;自动补上  &lt;code&gt;&amp;lt;tag&amp;gt;&lt;/code&gt;  和  &lt;code&gt;&amp;lt;/tag&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;用文本 tokenizer 编码&lt;/li&gt;
+&lt;li&gt;保证有  &lt;code&gt;text_bos_id&lt;/code&gt;  和  &lt;code&gt;text_eos_id&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;lyrics&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#lyrics&#34;&gt;#&lt;/a&gt;  &lt;code&gt;lyrics&lt;/code&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;同样支持路径或字符串输入&lt;/li&gt;
+&lt;li&gt;转成小写&lt;/li&gt;
+&lt;li&gt;文本 tokenizer 编码&lt;/li&gt;
+&lt;li&gt;同样补 BOS / EOS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;然后它们会被拼成一个文本前缀，塞进  &lt;code&gt;tokens[:, -1]&lt;/code&gt; ，也就是最后一列文本轨道。&lt;/p&gt;
+&lt;p&gt;从建模角度看，这相当于说：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tags&lt;/code&gt;  负责全局风格条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lyrics&lt;/code&gt;  负责长程语义内容和歌词对齐&lt;/li&gt;
+&lt;li&gt;两者共享同一个文本 token 空间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这一层其实仍然能看到 UniAudio 的影子：&lt;br&gt;
+&lt;strong&gt;条件先被 token 化，再进入统一序列建模。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;只是到了 HeartMuLa，这件事已经不再需要 UniAudio 那种通用 task formatter，而是直接被写死成 “tags + lyrics” 的音乐生成输入协议。&lt;/p&gt;
+&lt;h3 id=&#34;11-还有一个预留口连续条件段&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#11-还有一个预留口连续条件段&#34;&gt;#&lt;/a&gt; 11. 还有一个预留口：连续条件段&lt;/h3&gt;
+&lt;p&gt;在  &lt;code&gt;preprocess()&lt;/code&gt;  里还有一块很有意思：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;muq_embed&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;muq_idx&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当前实现里， &lt;code&gt;ref_audio&lt;/code&gt;  还没有真正开放，默认是一个全零向量；但从代码接口看得很清楚，HeartMuLa 已经给 “连续向量条件” 留出了位置。&lt;/p&gt;
+&lt;p&gt;在  &lt;code&gt;HeartMuLa.generate_frame()&lt;/code&gt;  里，这个连续向量会经过：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;self.muq_linear&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;然后被写入某个指定时间步  &lt;code&gt;starts&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;这意味着它不仅支持离散文本 token 条件，还预留了：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;把连续的音乐语义 embedding 插进生成过程&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这和 UniAudio 的  &lt;code&gt;continuous_segments&lt;/code&gt;  思想是同源的，只不过 HeartMuLa 把它做成了一个更明确、也更偏音乐场景的接口。&lt;/p&gt;
+&lt;h3 id=&#34;12-heartmula-的模型结构不是单个-lm而是-backbone-frame-decoder&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#12-heartmula-的模型结构不是单个-lm而是-backbone-frame-decoder&#34;&gt;#&lt;/a&gt; 12. HeartMuLa 的模型结构：不是单个 LM，而是 backbone + frame decoder&lt;/h3&gt;
+&lt;p&gt;如果去看  &lt;code&gt;src/heartlib/heartmula/modeling_heartmula.py&lt;/code&gt; ，会发现 HeartMuLa 的结构设计非常有针对性。&lt;/p&gt;
+&lt;p&gt;它不是直接拿一个 LLaMA 输出所有 token，而是拆成两段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;backbone&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;decoder&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;并且这两段都来自  &lt;code&gt;llama3_2&lt;/code&gt;  family 的变体：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;llama-3B&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;llama-300M&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;llama-7B&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;llama-400M&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;官方默认配置里：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;backbone_flavor = &amp;quot;llama-3B&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;decoder_flavor = &amp;quot;llama-300M&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个搭配很能说明问题。&lt;/p&gt;
+&lt;p&gt;我的理解是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;大 backbone&lt;/strong&gt; 负责跨时间的长程建模&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;小 decoder&lt;/strong&gt; 负责在单个时间帧内，把剩余 codebooks 补全&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，HeartMuLa 把生成问题拆成了两个粒度：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先决定当前 frame 的 “主 token / 主语义”&lt;/li&gt;
+&lt;li&gt;再把这一帧剩余的 codebooks 补齐&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这和 UniAudio 的 MegaByte 分层思想非常接近，只是写法更直接，也更贴合音乐 codec 的多 codebook 现实。&lt;/p&gt;
+&lt;h3 id=&#34;13-heartmulagenerate_frame-到底做了什么&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#13-heartmulagenerate_frame-到底做了什么&#34;&gt;#&lt;/a&gt; 13. HeartMuLa.generate_frame () 到底做了什么&lt;/h3&gt;
+&lt;p&gt;这是整个 heartlib 里最关键的函数之一。&lt;/p&gt;
+&lt;p&gt;它的逻辑可以拆成下面几步：&lt;/p&gt;
+&lt;h4 id=&#34;第一步嵌入当前输入&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第一步嵌入当前输入&#34;&gt;#&lt;/a&gt; 第一步：嵌入当前输入&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;_embed_tokens()&lt;/code&gt;  会把当前 token block 变成 embedding：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文本列走  &lt;code&gt;text_embeddings&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;音频 codebooks 走  &lt;code&gt;audio_embeddings&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而且音频 embedding 并不是简单查表，它会按 codebook 编号加偏移：&lt;/p&gt;
+&lt;figure class=&#34;highlight text&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs text&#34;&gt;token + codebook_id * audio_vocab_size&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;也就是说：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第 0 个 codebook 的 token 空间&lt;/li&gt;
+&lt;li&gt;第 1 个 codebook 的 token 空间&lt;/li&gt;
+&lt;li&gt;…&lt;/li&gt;
+&lt;li&gt;第 7 个 codebook 的 token 空间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;都会被映射到同一个大 embedding 表里，但彼此不会冲突。&lt;/p&gt;
+&lt;p&gt;这和 UniAudio 里的  &lt;code&gt;type_bias&lt;/code&gt;  本质相同，只不过这里的 bias 不再是 “模态级”，而是更细的 &lt;strong&gt;codebook 级&lt;/strong&gt;。&lt;/p&gt;
+&lt;h4 id=&#34;第二步把这一帧所有模态-merge-成一个-backbone-输入&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第二步把这一帧所有模态-merge-成一个-backbone-输入&#34;&gt;#&lt;/a&gt; 第二步：把这一帧所有模态 merge 成一个 backbone 输入&lt;/h4&gt;
+&lt;p&gt;代码里有一句特别关键：&lt;/p&gt;
+&lt;figure class=&#34;highlight python&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs python&#34;&gt;h = masked_embeds.&lt;span class=&#34;hljs-built_in&#34;&gt;sum&lt;/span&gt;(dim=&lt;span class=&#34;hljs-number&#34;&gt;2&lt;/span&gt;)&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这说明在进入 backbone 之前，HeartMuLa 会把：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;8 个 audio codebook embeddings&lt;/li&gt;
+&lt;li&gt;1 个 text embedding&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;先在帧内做聚合。&lt;/p&gt;
+&lt;p&gt;这一步的含义是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;backbone 看到的是 &lt;strong&gt;每个时间步的综合表示&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;而不是 9 条平行序列分别做自注意力&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;换句话说，HeartMuLa 的 backbone 更像是在看 “帧级音乐状态”，而不是细粒度 token 网格。&lt;/p&gt;
+&lt;h4 id=&#34;第三步用-backbone-预测当前帧的第一个音频-codebook&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第三步用-backbone-预测当前帧的第一个音频-codebook&#34;&gt;#&lt;/a&gt; 第三步：用 backbone 预测当前帧的第一个音频 codebook&lt;/h4&gt;
+&lt;p&gt;backbone 输出最后一个时间步的隐藏状态  &lt;code&gt;last_h&lt;/code&gt;  之后，会先经过：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;codebook0_head&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;拿到第一个 codebook 的 logits。&lt;/p&gt;
+&lt;p&gt;这个步骤很像 “先决定这一帧的主符号”。&lt;/p&gt;
+&lt;h4 id=&#34;第四步再用小-decoder-依次补完其余-codebooks&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第四步再用小-decoder-依次补完其余-codebooks&#34;&gt;#&lt;/a&gt; 第四步：再用小 decoder 依次补完其余 codebooks&lt;/h4&gt;
+&lt;p&gt;拿到  &lt;code&gt;c0_sample&lt;/code&gt;  之后，会先把它 embed 成  &lt;code&gt;c0_embed&lt;/code&gt; ，再和  &lt;code&gt;last_h&lt;/code&gt;  一起送进小 decoder。&lt;/p&gt;
+&lt;p&gt;然后循环预测：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;codebook 1&lt;/li&gt;
+&lt;li&gt;codebook 2&lt;/li&gt;
+&lt;li&gt;…&lt;/li&gt;
+&lt;li&gt;codebook 7&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，整个单帧生成过程其实就是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;backbone 决定 frame 级主语义&lt;/li&gt;
+&lt;li&gt;decoder 在这一帧内部自回归地补完细节 codebooks&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这也是它和 UniAudio 最核心的结构继承关系：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;都不是 “纯平铺 token LM”&lt;/li&gt;
+&lt;li&gt;都有明显的层级生成思想&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但 HeartMuLa 把层级从 UniAudio 的 “global/local token block” 改写成了更适合音乐 codec 的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;跨帧 backbone&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;帧内 codebook decoder&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;14-heartmula-的-cfg-是怎么做的&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#14-heartmula-的-cfg-是怎么做的&#34;&gt;#&lt;/a&gt; 14. HeartMuLa 的 CFG 是怎么做的&lt;/h3&gt;
+&lt;p&gt;HeartMuLa 还内置了  &lt;code&gt;classifier-free guidance&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;这一点在  &lt;code&gt;generate_frame()&lt;/code&gt;  里能直接看到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果  &lt;code&gt;cfg_scale &amp;gt; 1.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;batch 会复制成 cond /uncond 两支&lt;/li&gt;
+&lt;li&gt;文本条件在 uncond 分支里会被替换成  &lt;code&gt;unconditional_text_embedding&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;最后通过&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight text&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs text&#34;&gt;guided = uncond + (cond - uncond) * cfg_scale&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;做 guidance&lt;/p&gt;
+&lt;p&gt;这一步也很关键，因为它说明 HeartMuLa 已经不只是传统 LM 采样，而是在借用 diffusion /multimodal generation 里非常成熟的 guidance 思想，去增强条件控制。&lt;/p&gt;
+&lt;p&gt;这也是它比 UniAudio 更 “音乐生成专用” 的地方：&lt;br&gt;
+UniAudio 的重点是统一框架，HeartMuLa 的重点已经变成了 &lt;strong&gt;控制质量和条件响应性&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;15-整首歌是怎么一步一步生成出来的&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#15-整首歌是怎么一步一步生成出来的&#34;&gt;#&lt;/a&gt; 15. 整首歌是怎么一步一步生成出来的&lt;/h3&gt;
+&lt;p&gt;在  &lt;code&gt;HeartMuLaGenPipeline._forward()&lt;/code&gt;  里，整首歌的生成主循环写得非常直白：&lt;/p&gt;
+&lt;h4 id=&#34;初始步&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#初始步&#34;&gt;#&lt;/a&gt; 初始步&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;先把  &lt;code&gt;tags + lyrics&lt;/code&gt;  前缀送进模型&lt;/li&gt;
+&lt;li&gt;调一次  &lt;code&gt;generate_frame()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;得到第一个音频 frame 的 8 个 codebook token&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;之后的每一步&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#之后的每一步&#34;&gt;#&lt;/a&gt; 之后的每一步&lt;/h4&gt;
+&lt;p&gt;每一步都做：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;把上一步生成的音频 token pad 成  &lt;code&gt;[1, 9]&lt;/code&gt;  结构&lt;/li&gt;
+&lt;li&gt;前 8 列放音频 token&lt;/li&gt;
+&lt;li&gt;最后一列文本置空&lt;/li&gt;
+&lt;li&gt;再调一次  &lt;code&gt;generate_frame()&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;循环上限是：&lt;/p&gt;
+&lt;figure class=&#34;highlight python&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs python&#34;&gt;max_audio_frames = max_audio_length_ms // &lt;span class=&#34;hljs-number&#34;&gt;80&lt;/span&gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这个式子非常关键，因为它说明 HeartMuLa 的时间步长是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;每帧 80 ms&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;120000 ms&lt;/code&gt;  大约是  &lt;code&gt;1500&lt;/code&gt;  帧&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;240000 ms&lt;/code&gt;  大约是  &lt;code&gt;3000&lt;/code&gt;  帧&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这和歌曲的长时长生成是匹配的。&lt;/p&gt;
+&lt;p&gt;当任一 codebook 里出现  &lt;code&gt;audio_eos_id&lt;/code&gt;  时，生成就会停止。&lt;/p&gt;
+&lt;p&gt;最后，所有 frame 会被堆成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[num_codebooks, time]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是一条完整的离散音乐 token 序列。&lt;/p&gt;
+&lt;h3 id=&#34;16-这一步其实就是音乐版-language-model&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#16-这一步其实就是音乐版-language-model&#34;&gt;#&lt;/a&gt; 16. 这一步其实就是 “音乐版 language model”&lt;/h3&gt;
+&lt;p&gt;如果把 HeartMuLa 的生成过程再抽象一下，它做的就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文本条件提供歌曲语义与风格&lt;/li&gt;
+&lt;li&gt;模型沿时间帧自回归&lt;/li&gt;
+&lt;li&gt;每个时间帧内部再补全多 codebook token&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以它仍然是语言模型思路，只不过这里的 “语言” 已经不再是单一文本 token，而是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;时间上的 frame&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;帧内的多 codebook 并行结构&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这就是为什么我会说 HeartMuLa 是从 UniAudio 这条线自然长出来的。&lt;br&gt;
+它继承的不是某几个具体脚本，而是 “把音频生成转写成统一离散建模” 的世界观。&lt;/p&gt;
+&lt;h3 id=&#34;17-生成的-token-最后怎么变成声音heartcodec&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#17-生成的-token-最后怎么变成声音heartcodec&#34;&gt;#&lt;/a&gt; 17. 生成的 token 最后怎么变成声音：HeartCodec&lt;/h3&gt;
+&lt;p&gt;HeartMuLa 只负责产出 token，并不直接输出 waveform。&lt;br&gt;
+真正把 token 还原成声音的是  &lt;code&gt;HeartCodec&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;这部分逻辑在：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;src/heartlib/heartcodec/modeling_heartcodec.py&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;里面最核心的接口是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HeartCodec.detokenize(codes, ...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从配置上就能看出来，HeartCodec 并不是一个简单解码器，而是由两部分组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FlowMatching&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ScalarModel&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;直觉上可以理解成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先根据离散 codes 生成连续 latent&lt;/li&gt;
+&lt;li&gt;再把 latent decode 成最终波形&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;具体过程&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#具体过程&#34;&gt;#&lt;/a&gt; 具体过程&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;detokenize()&lt;/code&gt;  里会先：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把 code 序列搬到 device 上&lt;/li&gt;
+&lt;li&gt;初始化一个随机 latent  &lt;code&gt;first_latent&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;按滑窗切分 codes&lt;/li&gt;
+&lt;li&gt;每段调用  &lt;code&gt;flow_matching.inference_codes(...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，离散 codes 并不是直接送进一个简单反量化器，而是要先经过 flow matching 做连续 latent 重建。&lt;/p&gt;
+&lt;p&gt;然后，得到的 latent 会再经过：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;self.scalar_model.decode(...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;还原成最终音频。&lt;/p&gt;
+&lt;p&gt;这一步其实很像在明确分工：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HeartMuLa&lt;/code&gt;  负责高层音乐 token 建模&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HeartCodec&lt;/code&gt;  负责高保真音频重建&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这和 UniAudio 里 “统一框架中同时包含 codec 和 generative LM” 的思路并不矛盾，只是 HeartMuLa 把两者边界切得更清楚。&lt;/p&gt;
+&lt;h3 id=&#34;18-heartcodec-为什么重要&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#18-heartcodec-为什么重要&#34;&gt;#&lt;/a&gt; 18. HeartCodec 为什么重要&lt;/h3&gt;
+&lt;p&gt;如果没有 HeartCodec，HeartMuLa 只是一套 token generator。&lt;/p&gt;
+&lt;p&gt;而 HeartCodec 的重要性在于，它直接决定了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同样长度的 token 序列能承载多少音乐信息&lt;/li&gt;
+&lt;li&gt;离散 token 到高保真音频的损失有多大&lt;/li&gt;
+&lt;li&gt;系统最终听感能不能接近产品级&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;HeartMuLa README 里也明确把这点讲出来了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HeartMuLa&lt;/code&gt;  是语言模型&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HeartCodec&lt;/code&gt;  是高保真 music codec&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这说明它并没有把 codec 当成辅助工具，而是把它视为音乐 foundation model 家族的一部分。&lt;/p&gt;
+&lt;p&gt;这也是它和早期 UniAudio 最大的实用差异之一：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;UniAudio 更像统一研究框架&lt;/li&gt;
+&lt;li&gt;HeartMuLa 更像 &lt;strong&gt;把 codec 也一起产品化&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;19-所以从-uniaudio-到-heartmula真正继承了什么&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#19-所以从-uniaudio-到-heartmula真正继承了什么&#34;&gt;#&lt;/a&gt; 19. 所以，从 UniAudio 到 HeartMuLa，真正继承了什么&lt;/h3&gt;
+&lt;p&gt;我觉得这条路径真正继承了四件事。&lt;/p&gt;
+&lt;h4 id=&#34;第一离散化优先&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第一离散化优先&#34;&gt;#&lt;/a&gt; 第一，离散化优先&lt;/h4&gt;
+&lt;p&gt;两者都相信：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;原始波形太长，直接建模成本太高&lt;/li&gt;
+&lt;li&gt;应该先用 codec 把音频变成离散 token&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;第二统一序列建模&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第二统一序列建模&#34;&gt;#&lt;/a&gt; 第二，统一序列建模&lt;/h4&gt;
+&lt;p&gt;两者都相信：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文字、音频条件、语义条件，本质上都可以变成 token 或 embedding&lt;/li&gt;
+&lt;li&gt;再通过统一序列模型完成生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;第三条件和目标的边界可以程序化定义&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第三条件和目标的边界可以程序化定义&#34;&gt;#&lt;/a&gt; 第三，条件和目标的边界可以程序化定义&lt;/h4&gt;
+&lt;p&gt;在 UniAudio 里，这体现在 task definition。&lt;br&gt;
+在 HeartMuLa 里，这体现在固定的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;tags&lt;/li&gt;
+&lt;li&gt;lyrics&lt;/li&gt;
+&lt;li&gt;audio frames&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;输入协议。&lt;/p&gt;
+&lt;h4 id=&#34;第四层级建模比平铺建模更适合音频&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#第四层级建模比平铺建模更适合音频&#34;&gt;#&lt;/a&gt; 第四，层级建模比平铺建模更适合音频&lt;/h4&gt;
+&lt;p&gt;UniAudio 用的是 MegaByte 风格的 global/local。&lt;br&gt;
+HeartMuLa 用的是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;跨帧 backbone&lt;/li&gt;
+&lt;li&gt;帧内 decoder&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它们形式不同，但本质都在做同一件事：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;把长音频生成拆成不同粒度去建模。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;20-那-heartmula-又抛弃了-uniaudio-的什么&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#20-那-heartmula-又抛弃了-uniaudio-的什么&#34;&gt;#&lt;/a&gt; 20. 那 HeartMuLa 又抛弃了 UniAudio 的什么&lt;/h3&gt;
+&lt;p&gt;同样重要的是，它也放弃了不少 UniAudio 的东西。&lt;/p&gt;
+&lt;h4 id=&#34;放弃了万能任务框架&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#放弃了万能任务框架&#34;&gt;#&lt;/a&gt; 放弃了 “万能任务框架”&lt;/h4&gt;
+&lt;p&gt;HeartMuLa 不再试图让一个训练框架同时优雅覆盖几十种任务。&lt;/p&gt;
+&lt;h4 id=&#34;放弃了先抽象到极致再说&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#放弃了先抽象到极致再说&#34;&gt;#&lt;/a&gt; 放弃了 “先抽象到极致再说”&lt;/h4&gt;
+&lt;p&gt;它更像是先承认：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;音乐就是一个特殊任务&lt;/li&gt;
+&lt;li&gt;歌词、风格、人声、伴奏、长时长结构都很特殊&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以值得单独设计一套专用系统。&lt;/p&gt;
+&lt;h4 id=&#34;放弃了研究框架优先&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#放弃了研究框架优先&#34;&gt;#&lt;/a&gt; 放弃了 “研究框架优先”&lt;/h4&gt;
+&lt;p&gt;HeartMuLa /heartlib 明显更偏向：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在线推理&lt;/li&gt;
+&lt;li&gt;checkpoint 组织&lt;/li&gt;
+&lt;li&gt;pipeline 固化&lt;/li&gt;
+&lt;li&gt;本地部署体验&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是更接近 “库” 和 “产品” 的形态。&lt;/p&gt;
+&lt;h3 id=&#34;21-我对这条路径的最终判断&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#21-我对这条路径的最终判断&#34;&gt;#&lt;/a&gt; 21. 我对这条路径的最终判断&lt;/h3&gt;
+&lt;p&gt;如果把 UniAudio 和 HeartMuLa 看成一条连续技术路线，我会这样理解：&lt;/p&gt;
+&lt;p&gt;UniAudio 解决的是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如何把音频世界里的不同任务统一成一个序列建模问题？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;HeartMuLa 解决的是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在这个统一思想成立之后，怎样把它收缩成一个真正能打的音乐系统？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;UniAudio 提供的是范式&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;HeartMuLa 提供的是面向音乐的专门化落地&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从代码层面，你能很清楚地看到这条继承关系：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;UniAudio 的  &lt;code&gt;task definition / tokenizer / type bias / unified sequence&lt;/code&gt; &lt;br&gt;
+ 变成了 HeartMuLa 的  &lt;code&gt;tags + lyrics + frame-wise multi-codebook tokens&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;UniAudio 的统一 LM 思想&lt;br&gt;
+变成了 HeartMuLa 的  &lt;code&gt;LLaMA backbone + frame decoder&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;UniAudio 的 codec-first worldview&lt;br&gt;
+ 变成了 HeartMuLa 的  &lt;code&gt;HeartCodec + HeartMuLa&lt;/code&gt;  双模块系统&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果再往后推一步，我会认为这条路线真正的下一站，很可能是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更强的 reference audio conditioning&lt;/li&gt;
+&lt;li&gt;更细粒度的 segment planning&lt;/li&gt;
+&lt;li&gt;更高效的 streaming /acceleration&lt;/li&gt;
+&lt;li&gt;更完整的音乐编辑工作流&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因为 HeartMuLa 当前公开代码里，其实已经把这些扩展位预留出来了。&lt;/p&gt;
+&lt;h2 id=&#34;参考链接&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#参考链接&#34;&gt;#&lt;/a&gt; 参考链接&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;UniAudio GitHub: &lt;a href=&#34;https://github.com/yangdongchao/UniAudio&#34;&gt;https://github.com/yangdongchao/UniAudio&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;UniAudio Paper: &lt;a href=&#34;https://arxiv.org/abs/2310.00704&#34;&gt;https://arxiv.org/abs/2310.00704&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;HeartMuLa / heartlib GitHub: &lt;a href=&#34;https://github.com/HeartMuLa/heartlib&#34;&gt;https://github.com/HeartMuLa/heartlib&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;HeartMuLa Paper: &lt;a href=&#34;https://arxiv.org/abs/2601.10547&#34;&gt;https://arxiv.org/abs/2601.10547&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;YuE GitHub: &lt;a href=&#34;https://github.com/multimodal-art-projection/YuE&#34;&gt;https://github.com/multimodal-art-projection/YuE&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;YuE Paper: &lt;a href=&#34;https://arxiv.org/abs/2503.08638&#34;&gt;https://arxiv.org/abs/2503.08638&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;DiffRhythm GitHub: &lt;a href=&#34;https://github.com/ASLP-lab/DiffRhythm&#34;&gt;https://github.com/ASLP-lab/DiffRhythm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;DiffRhythm Paper: &lt;a href=&#34;https://arxiv.org/abs/2503.01183&#34;&gt;https://arxiv.org/abs/2503.01183&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ACE-Step GitHub: &lt;a href=&#34;https://github.com/ace-step/ACE-Step&#34;&gt;https://github.com/ace-step/ACE-Step&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ACE-Step Paper: &lt;a href=&#34;https://arxiv.org/abs/2506.00045&#34;&gt;https://arxiv.org/abs/2506.00045&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ACE-Step 1.5 Paper: &lt;a href=&#34;https://arxiv.org/abs/2602.00744&#34;&gt;https://arxiv.org/abs/2602.00744&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LeVo / SongGeneration GitHub: &lt;a href=&#34;https://github.com/tencent-ailab/SongGeneration&#34;&gt;https://github.com/tencent-ailab/SongGeneration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LeVo Paper: &lt;a href=&#34;https://arxiv.org/abs/2506.07520&#34;&gt;https://arxiv.org/abs/2506.07520&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Muse GitHub: &lt;a href=&#34;https://github.com/yuhui1038/Muse&#34;&gt;https://github.com/yuhui1038/Muse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Muse Paper: &lt;a href=&#34;https://arxiv.org/abs/2601.03973&#34;&gt;https://arxiv.org/abs/2601.03973&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+        <category term="音乐生成" />
+        <category term="AIGC" />
+        <category term="LLM" />
+        <category term="Diffusion" />
+        <category term="Review" />
+        <updated>2026-04-12T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/03/23/2025-03-23-ThreeGoGamesofLife/</id>
+        <title>Three Go Games of Life</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/03/23/2025-03-23-ThreeGoGamesofLife/"/>
+        <content type="html">&lt;p&gt;Hello everyone!&lt;/p&gt;
+&lt;p&gt;Today, I want to introduce myself through the ancient game of Go. Just as a Go board has 361 possibilities, my life has been shaped by calculated moves, unexpected setbacks, and unbrokenable friendlyship—even when the game doesn’t go as planned.&lt;/p&gt;
+&lt;p&gt;The opening phase of Go is all about balancing ambition and caution, however, I learned this the hard way. At 12, I lost my first official Go match because of reckless opening moves. That time my mentor said I was building castles on the sand,asking me to focus on fundamentals and stability. So I started studying classic strategies, practicing daily, and avoiding shortcuts. One year later, I finally achieved second dan. Go taught me that a strong foundation matters more than early victories.&lt;/p&gt;
+&lt;p&gt;The middle game is all about adaptability. Once, I faced a seasoned player who trapped me. Panicking, I made impulsive moves and lost. That time I froze under pressure and misread the strategies. But then I reviewed every mistake, journaled my errors, trained with stronger opponents, and eventually overcame my fear of failure. Go’s middle game taught me that defeat isn’t failure unless you stop learning.&lt;/p&gt;
+&lt;p&gt;Go’s endgame taught me that even solo games need connection. When I was trailing by 3 points, my hands trembling, my childhood friend, who had trained with me for years, whispered, “Breathe. You’ve faced harder fights.” Her calmness calm me down. Inspired, I won by half a point. Later, when she struggled with depression, I returned the support, reminding her of our Go mantra: “Stones may fall, but the board remains.”&lt;/p&gt;
+&lt;p&gt;Life of me, like Go, isn’t about winning every match. My three battles taught me to value growth over titles. Today, I’m still a Go amateur—but every game deepens my respect for strategy, adaptability, and friendlyship. The board remains my teacher, reminding me: “&lt;strong&gt;A lost game still holds winning lessons.&lt;/strong&gt;”&lt;/p&gt;
+&lt;p&gt;Thank you.&lt;/p&gt;
+</content>
+        <category term="创作" />
+        <category term="演讲" />
+        <updated>2025-03-22T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/03/22/2025-03-22-%E6%B4%BB%E4%B8%8B%E5%8E%BB/</id>
+        <title>活下去</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/03/22/2025-03-22-%E6%B4%BB%E4%B8%8B%E5%8E%BB/"/>
+        <content type="html">&lt;p&gt;3 月 22 日，没关注天气，好累&lt;/p&gt;
+&lt;p&gt;感冒了，吃了很多药，难受&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <category term="创作" />
+        <updated>2025-03-21T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/03/20/2025-03-20-%E5%A4%8F%E6%97%A5%E5%B9%BB%E5%BD%B1/</id>
+        <title>夏日幻影</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/03/20/2025-03-20-%E5%A4%8F%E6%97%A5%E5%B9%BB%E5%BD%B1/"/>
+        <content type="html">&lt;p&gt;3 月 20 日 天气，就和昨天一样，是成都的阴天&lt;/p&gt;
+&lt;p&gt;今天早上又没来得及上早读，与其说是没来得及，不如说是前一天晚上故意把闹钟音量调小，故意关闭震动，故意看电影到很晚导致的&lt;/p&gt;
+&lt;p&gt;直到现在才意识到，原来周四也是一天的水课，早上的早读已经因为放弃了综测分决定无视了，，虽然早读早已经改成了晨练，怎么现在才想起来，真是的，早上的历史课上写了两道力扣，写了第二单元的 icoding，写了离散的作业&lt;/p&gt;
+&lt;p&gt;离散老师讲的真烂，决定不去上课了，虽然在慕课看了课，但是也学得一塌糊涂，太糟糕了，这周怎么竟是这样&lt;/p&gt;
+&lt;p&gt;依然保持着睡醒就打开她的聊天框的习惯，不知道要发什么，但是一定要看看&lt;/p&gt;
+&lt;p&gt;他们说，长沙的玉兰花开了，是吗，我不知道，成都的花开了吗，我不知道&lt;/p&gt;
+&lt;p&gt;我在上晚课，这老师真的懂 AI 吗，她上这节课的目的是什么，意义是什么，好想知道，不过也没有那么想知道&lt;/p&gt;
+&lt;p&gt;今天洗澡前想找到中午丢失的钥匙，但是没找到，为什么呢&lt;/p&gt;
+&lt;p&gt;刷知乎看到一则消息，写着夏日幻想，已经春分了，夏天还远吗&lt;/p&gt;
+&lt;p&gt;该怎么描述一件事物，该怎么描述我的心情，该怎么清醒的过一整天？我不知道，我的人生是后缀表达式，直到确定的符号，确定的转折到了，我才知道栈中放入的我的一切人生的结果&lt;/p&gt;
+&lt;p&gt;所以什么是夏日幻想？是力扣题吗，是浴衣包裹下红色工业糖浆的味道吗？&lt;/p&gt;
+&lt;p&gt;到了夏天，我会犯困，我会思考规划中不应该做的事情，我会摆出冷漠的表情对待她&lt;/p&gt;
+&lt;p&gt;我会和所有听 Andante con moto 的人做出一样的选择，我会找不到钥匙，我会放弃 AI，我会学会数据结构，拿到所有报名的赛事的奖项，写出完美的文档，0AI 地做出 PPT，我会考好期中，会考好期末，会再玩一遍美好的每一天，会放弃在虚度中寻找意义，会停止做虚假的人设，会在一起&lt;/p&gt;
+&lt;p&gt;她说，每个丢失的钥匙都在生成新的哈希值，直到你承认某些锁不必打开&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <category term="创作" />
+        <updated>2025-03-19T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/01/24/2025-01-24-will/</id>
+        <title>心情</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/01/24/2025-01-24-will/"/>
+        <content type="html">&lt;p&gt;&lt;strong&gt;当我逼迫自己做一件事情&lt;/strong&gt;&lt;br&gt;
+&lt;strong&gt;我发现我会做的很好&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;所以考差了，你也要逼自己好起来&lt;/strong&gt;&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <updated>2025-01-23T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/01/06/2025-01-06-spring/</id>
+        <title>春日影</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/01/06/2025-01-06-spring/"/>
+        <content type="html">&lt;blockquote&gt;
+&lt;p&gt;春の日影に&lt;br&gt;
+柳が揺れて&lt;br&gt;
+心穏やか&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;さびしさや&lt;br&gt;
+一尺消えて&lt;br&gt;
+ゆくほたる&lt;/p&gt;
+&lt;/blockquote&gt;
+</content>
+        <category term="创作" />
+        <updated>2025-01-05T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2025/01/01/2025-01-01-happynewyear/</id>
+        <title>我的一些话，写在2024的最后一个小时</title>
+        <link rel="alternate" href="https://ablingss.github.io/2025/01/01/2025-01-01-happynewyear/"/>
+        <content type="html">&lt;blockquote&gt;
+&lt;p&gt;对于新的一年，我没有什么特别的想法，也没有什么特别的愿望。因为我觉得，不论是年初还是年末，人活一辈子，最重要的事情就是活下去。每一天都在努力活下去，每一年都在继续活下去。这是我们每个人都应该做到的。其他的，真没什么好说的。&lt;/p&gt;
+&lt;p&gt;但新的一年还是来了，很多人会设立各种目标、计划，心想着怎么在这一年里有所成就，如何改变自己，如何与过去的自己告别。然而，生活就是这样，很多事情并不像我们想的那样顺利。新的一年可能会有各种变故，也可能会一切如常。无论如何，活下去才是最重要的。&lt;/p&gt;
+&lt;p&gt;新的一年，我祝愿大家有力量去承受生活的苦痛，也有勇气去面对人生的挑战。希望你们不要太焦虑，也不要太疲惫。生活本来就不容易，没必要给自己太多压力。&lt;/p&gt;
+&lt;p&gt;总之，活得快乐点，活得自由点，活得真实点。希望大家在这一年里，不忘自己最初的梦想，勇敢地去追求，也不要害怕失败。因为，能活下去，已经是最伟大的成功。&lt;/p&gt;
+&lt;p&gt;新的一年，我祝大家一切顺利。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;为了道别的聚会。&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;瞬间&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#瞬间&#34;&gt;#&lt;/a&gt; 【瞬间】&lt;/h3&gt;
+&lt;p&gt;6 月 9 号早上，我是在愧疚感中醒来的，我想，我的高中怎么就这样结束了呢。&lt;/p&gt;
+&lt;p&gt;这三年到底意味着什么，我想不明白。但是它结束了，好像，我也不该去想它了。&lt;/p&gt;
+&lt;p&gt;我总是对一些瞬间印象深刻，但是每个瞬间承载的故事却全然忘记。&lt;/p&gt;
+&lt;p&gt;就像那个没有太远的暑假，我的记忆已经全部困在 8 月西安地铁的燥热中，只剩下几个瞬间让我管窥。有人说，中国式教育就是蝉的一生 —— 埋在图里 17 年，然后趴在树上叫三个月，然后去死。我没有鸣叫的记忆，却感到压在我头上的土越来越厚，我钻不出，我也不想出去。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;拍毕业照的日子。&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;我还记得几个对话&lt;/p&gt;
+&lt;p&gt;在地铁上，我看着友人的眼睛，问他这是否是我们最后一次见面&lt;/p&gt;
+&lt;p&gt;在华山上，她说喜欢我拍的日出&lt;/p&gt;
+&lt;p&gt;和班主任的最后一次见面，他问我为什么要来这里&lt;/p&gt;
+&lt;p&gt;在那个昏暗的自习室，他说，他一辈子都要做自己&lt;/p&gt;
+&lt;p&gt;考完英语，铃声响起，广播里说 “考试结束，请考生起立，停止作答”，走出考场大门，我接到那束向日葵的时候，我知道，一些事永远的改变了，我也不再是小孩子。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;离开的时候才有点怀念。&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;新年&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#新年&#34;&gt;#&lt;/a&gt; 【新年】&lt;/h3&gt;
+&lt;p&gt;我想，对我来说跨年最好的形式就是熬一整夜，什么都不学什么都不想，就是熬夜，无比单纯又虔诚地做这件事。&lt;/p&gt;
+&lt;p&gt;我可能暂时离不开顾影自怜的悲伤，也离不开你的陪伴，但是我还是兀自地想，我想，我能做到的，能不能比现在更多，我能不能真的好好地爱自己，一个人活着，一个人坚定地做自己。&lt;/p&gt;
+&lt;p&gt;但是至少我希望，明年，脱离高考桎梏的我能表达我自己真实的感情，不做虚伪的人，不做骗自己的人；不爱抽象的人，而是爱具体的人；为自己的每一句话和每一个动作负责，我想成为一个真正的人。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;黄昏蓝色戏剧。&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;碎碎念&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#碎碎念&#34;&gt;#&lt;/a&gt; 【碎碎念】&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;猫猫。&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;不管你什么时候读到这段话，我都希望你能在这个新的一年里，好好地爱自己，好好地爱自己，好好地爱自己。&lt;/p&gt;
+&lt;p&gt;谢谢你窥见我心的一隅，谢谢你陪我走过阅读的这两分钟。我想让你知道，未来的日子，我会好好陪着你，所以你也要好好幸福。&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <updated>2024-12-31T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/12/11/2024-12-11-glory4thdebate/</id>
+        <title>神一样的四辩合集</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/12/11/2024-12-11-glory4thdebate/"/>
+        <content type="html">&lt;h3 id=&#34;21世纪青年人做加法做减法更幸福詹青云结辩正方&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#21世纪青年人做加法做减法更幸福詹青云结辩正方&#34;&gt;#&lt;/a&gt; 21 世纪青年人做加法 / 做减法更幸福，詹青云结辩（正方）&lt;/h3&gt;
+&lt;p&gt;大家好，今天我们跟对方有三个根本的分歧：&lt;/p&gt;
+&lt;p&gt;第一是成功路径不同。我方承认，聚焦没有问题，如果一个年轻人在年轻的时候完全知道一生要什么，一生走下去不后悔，没问题，挺幸福的。可是现实是，这个决定对于大多数人来说不应该在青年时代做，这个时候你的大脑没有发育完全、你的人生还在不停地变动、你的智识还有限，而这个世界在飞快地变化。很有可能你想要聚焦的东西，有一天是你不适应、不喜欢或者被时代淘汰的东西。&lt;/p&gt;
+&lt;p&gt;这个时候，您方跳到第二点，是告诉我说，没关系，这个时候，只要我坚定自己的内心，不就没问题了吗。这是我们双方的第二点分歧：幸福观的不同。您方的幸福观是一种妥协的幸福观，我方的幸福观是进取的幸福观。你方的意思是：不管我的人生发展成怎样，社会如何对待我，不用在乎，我妥协、我看开、我豁达，就可以幸福。&lt;/p&gt;
+&lt;p&gt;对方辩友，那些历史上真正收获了豁达心态的人：杨慎 “是非成败转头空”；王维 “行到水穷处，坐看云起时” 的时候。他们是在什么时候收获这种豁达？是遍历人世的沧桑，经历了繁华、经过了奋斗，见识了人世中更深刻的道理，他可以领悟到繁华。就算我退一步、俗一点讲，我多读点书多看一点世界，对这个世界的理解和思考方式丰富一点，只有通过做加法的方法您才能收获到真正的豁达。&lt;/p&gt;
+&lt;p&gt;最后我们双方最根本的分歧是对这个时代理解不同。您告诉我说，这个时代纷繁复杂，已经把太多的选择推到年轻人面前，所以我选择加就是在 “随大流”。不是，我们仔细想一想，这个时代给我们多的选择，不过就是您方说的商品、营销课、成功学。可是人生加减法上，那些人生重大关头的选择，是什么？这个社会真的在逼我们做加法吗？不是。我到了这个年纪，就应该结婚生子、成家立业。在人生重大关头的选择上，这个社会是要求青年人割舍那些不切实际的幻想，割舍那些错误的观念，回归一套社会范式、一套人生范式，是要求你做减法的。这个时候，真正追随自己内心，是应该不顾这套范式的束缚，冲破束缚去追寻自己心中所爱、活出一个真正多元的世界。&lt;/p&gt;
+&lt;p&gt;更重要的是，我们今天不是在替一个年轻人的幸福说话，是一代青年人。青年人拓宽自己人生边界的可能，是在拓宽这个世界价值判断的可能。既然这个世界是号称它是多元而包容的，我们就应该肆意去试，去让它去实践自己的诺言。既然这个世界多元而包容，既然这个社会告诉我们 “人不轻狂枉少年”，就没有人应该天然地觉得 “轻狂” 是一个贬义词。&lt;/p&gt;
+&lt;p&gt;对方辩友一直在劝我们啊，人生，选到自己最幸福的东西才是最快乐的。对方辩友，各位，我们都是年轻人，在我们人生的这个阶段，有什么东西是唯一珍贵的？什么叫 “欲买桂花同载酒，终不似，少年游”；什么叫 “旧游无处不堪寻。无寻处，惟有少年心”。那个唯一带不走的东西，不就是 “青春” 本身吗？&lt;/p&gt;
+&lt;p&gt;这一份机会你不珍惜，这一份可能你不珍惜。您跟我谈的是什么？是那份安顿了的幸福、是那份成熟了的幸福。可是这不是年轻人的幸福，因为年轻人不是在替你一个人谋幸福，不是你一个人看开了就可以，他是要为这个世界拓宽边界；是让所有人都有机会把道路越走越宽；是趁着年轻，我偏要勉强！&lt;/p&gt;
+&lt;h3 id=&#34;人性本善人性本恶-蒋昌建结辩&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#人性本善人性本恶-蒋昌建结辩&#34;&gt;#&lt;/a&gt; 人性本善人性本恶 蒋昌建结辩&lt;/h3&gt;
+&lt;p&gt;谢谢各位，一个严肃的辩论场需要一个严肃的概念。对方多次问我们人性怎么样？人性怎么样？始终没有问我们人性本怎么样？我想请问对方，人性是什么和人性本是什么是同样的一个概念吗？你们如果连这个概念都没有根本建立基础的话，那你们的立论从何而来呢？我们多次问对方的善花里面如何结出恶果，对方说要浇水，要施肥呀。那我就不懂了，大家都承蒙这个阳光雨露的话，为何有那么多罪行横遍这个世界呢？难道这个水，那个肥还情有独钟吗？为何要跟恶的人作一个潇洒的 “吻别” 呢？(笑声、掌声)&lt;/p&gt;
+&lt;p&gt;今天我们本着对真理的追求来同对方一起探讨这个千年探讨不完的话题。无论是从性善论的孟子也好还是性恶论的荀子也好，又有哪一家哪一派不要我们抑恶扬善呢？抑恶扬善是我方今天确立立场的一个根本出发点。下面我再一次总结我方的观点。&lt;/p&gt;
+&lt;p&gt;第一，只有认识人性本恶，才能正视历史和现实。回顾历史的时候，我的内心总感到痛苦而颤抖。从希波战争到十字军东征，从希特勒的奥斯维辛集中营到日寇在华北的细菌试验场，真可谓是 “色情与贪婪齐飞，野心共暴力一色。” 以往的人类历史，可以说是交织着满足人类无限贪欲而展开的狼烟与铁血啊！可见，本恶的人性如果不加以控制的话，将会给这个世界带来什么呢？&lt;/p&gt;
+&lt;p&gt;第二，只有认识人性本恶，才能重视道德、法律教化的作用，才能重视人类文明引导的结果，培养健全而又向上的人格。在历史的坎坷当中，人类并没有自取灭亡。尤其是在面对彬彬有礼、亲切友善的新加坡朋友面前，我们更有理由相信，人类明天会更好，这其中我们要感谢新加坡孜孜不倦地建立起他们优良的社会教化系统。人类文明是在人类智慧之光照耀下不断茁壮成长的。饮水思源，借此我们要感谢那些在人类教化路途中洒进他们含辛茹苦汗水的这些中西先哲们。正因为从他们的理论智慧当中，从他们的身体力行当中，人们才有可能从外在的强制走上理性的自约，自约人的本性的恶，从而培养一个健全而又向善的人格。可见，人性本恶，并不意味着人终身成为恶，只要通过社会的教化系统就可以弃恶扬善，化性起伪啊！&lt;/p&gt;
+&lt;p&gt;第三，只有认识人性本恶，才能调动一切社会教化的手段来扬善避恶。光阴荏苒，逝者如斯，在物质和科学技术突飞猛进的同时，而人类的精神家园可谓是花果飘零。在这个时候，我们要警惕，人性本恶这个基本的命题。可喜的是，在东方的大地上，我们说传统文化的发扬光大，已经从一阳来复开始走向了新的春天。我们也相信，通过传统文化的精华，必将使人类从无节制的欲望中合理地扼制并加以引导，从他律走向自律，从执法走向立法。人类才可能挽狂澜于既倒，扶大厦于将倾。“黑夜给了我黑色的眼睛，而我却要用它来寻找光明！” 谢谢各位！&lt;/p&gt;
+&lt;h3 id=&#34;大学生创业利大于弊弊大于利-黄执中结辩-正方&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#大学生创业利大于弊弊大于利-黄执中结辩-正方&#34;&gt;#&lt;/a&gt; 大学生创业利大于弊 / 弊大于利 黄执中结辩 （正方）&lt;/h3&gt;
+&lt;p&gt;大家好，有个道理很简单。一件事情，你把它看的越严重，你就越害怕它的失败。你把一件事情看的越严重，你就越恐惧它的失败。它的失败给你承担的压力就越大，我的计算就越多，于是就胆胆战战，这是很正常的。今天这场比赛，为什么对方辩友会把创业看成是这样一件不适合大学生做的事，是因为对方辩友把创业看成是一个人生极大地抉择，人生一个极大地投入，这种东西是跟求学的另一个目标全然抵触的，或者他有可能抵触，绝对是两相不能得兼的，一定是得不偿失的，他把它看的太重了。&lt;/p&gt;
+&lt;p&gt;各位啊，我们今天去考大学，没考上，对于那个学生而言，他觉得天要塌下来了，在人生的历程而言你觉得这算什么。你 20 岁的时候失恋，会觉得整个世界都毁灭了，你五十岁的时候会觉得什么，人生历练嘛，历练嘛。如果我在二十岁谈恋爱先想会不会成功，它是不是会妨碍我的学习，他是不是值得我的专注，这个人以后会不会讨来做老婆，万一她红杏出墙了怎么办，现在先不要请她去吃饭，万一她另行别恋，我不是帮别人养老婆，我算这么多，人生过得有意思吗？&lt;/p&gt;
+&lt;p&gt;我们今天只讨论一个简单的问题，一个大学生他想去创业，他不想放弃学业的同时又想去创业，他认为他已经准备充足了，他认为他已经有自信了，当然这个自信只是一个年轻的自信，他认为的充足只是一个二十岁的充足，可是为什么浇他冷水呢？五十岁的人干嘛熄灭二十岁的火焰呢？等他让五十岁的时候去回忆二十岁的莽撞，这不是一种人生吗？而且谁又知道只是莽撞还是深思熟虑呢？谁又知道这是得还是失呢？我们要用什么样的标准来衡量他二十岁的青春，二十岁的梦想呢？难道成败可以决定一切吗？&lt;/p&gt;
+&lt;p&gt;我们认为，讨论这个题目，讨论的是一个大学生想去创业的时候，我们要怎样评价他的行为，我们不知道他是成也不知道他是败，我不知道他准备的多也不知道他准备的少，我们不知道，我们只是看到他想去创业的这个行为，现在好了，瘫在各位的面前了，我们要去肯定他，还是否定他，我们要去鼓励他，还是打击他，我们要给他什么样的评价。&lt;/p&gt;
+&lt;p&gt;对方辩友，可是这个人的时间是有限的，人的时间是会冲突的。谁不是这样呢？在座各位每个人解释自己的身份，谁不同时具有两个以上的身份呢？我们是别人的儿女，也有可能是父母，我们既是学生，也有可能是别人的老师，我们那一个人不具备多重的身份？哪一个人不具备多重的要求呢？而难道我们没有人能把这些做好吗？难道我顾了这个就做不好那个吗？一个人做了孝顺的儿子就不能去做尽责的丈夫吗？显然不是嘛，人生的选择很多的，人生的配置很多的。有了选项，人生才变得更丰富，这不是最简单不过的道理吗？&lt;/p&gt;
+&lt;p&gt;我们今天在这个比赛中要辩论什么？逐条逐项地辩论大学生就业的成与败吗？没有意思嘛，因为失败的人永远比成功的人多太多。可是失败的人不会什么都没有，老年的回忆，年轻的梦想，都是他手上握的，失不掉的；学习的经历，挫折的感慨，也是丢不掉的，为什么要用那么功利的角度来衡量一切呢？我们今天大家来这个辩论比赛，谁也没有必胜的把握；而且我相信这十二支队伍当中大多数队伍都不是以赢得这场比赛，或者赢得某一场比赛，对于这边的好或坏来做判断。过程既是收获。&lt;/p&gt;
+&lt;h3 id=&#34;顺境逆境更有利于人的成长-黄执中结辩反方&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#顺境逆境更有利于人的成长-黄执中结辩反方&#34;&gt;#&lt;/a&gt; 顺境 / 逆境更有利于人的成长 黄执中结辩（反方）&lt;/h3&gt;
+&lt;p&gt;大家好，对方辩友刚刚最后一句话是 “衣食足而知荣辱”，可是我们要想想看，如果我们从小到大，衣食总是足的，我们怎么知道，荣辱这种事情会在衣食不足的时候消失呢？我们是不是就因为我们历经过战乱，饱尝过饥饿，看到道德往往要借由物质的一些基础上才会出现，所以我们清醒到了，哦，原来不足的时候，可能就没有道德，所以我们要小心，我们智慧就增长了。&lt;/p&gt;
+&lt;p&gt;对方辩友，我们今天聊过几个问题，我们今天谈到，唐三藏去取经，对方辩友一直在谈孙猴子，可是我们要了解，孙悟空为什么能有 72 变？他不也是被太上老君关在那个炼丹里头，练了半天，才成火眼金睛吗，他不也是去求仙求佛才学到的 72 变。孙猴子当初蹦出来的时候，他就自满自足，他到现在为止，还是水帘洞的一个小猴王而已，怎么会成佛成仙呢？所以我们要知道，不管是对谁，逆境对我们而言，都是有成长的。&lt;br&gt;
+　　&lt;br&gt;
+对方辩友认为，这场比赛是一种&lt;strong&gt;什么样的对决&lt;/strong&gt;呢，他认为逆境是面对问题，面对困难，可是只有顺境才能克服问题，解决困难，因此他们，比我们价值上是更高的。可是仔细想想可能又不对了，什么叫做在顺境当中能够解决问题，那是人家帮你解决问题呀！我在顺境当中，父母帮我解决衣食问题，老师帮我解决课业问题，同学帮我抄笔记，解决了可 能会被老师点到名的问题。在这样的顺境当中，我问题是解决了，可是我的解决吗，我这个人有成长吗？我也许学历越来越高，可能我的地位越来越高，可是我还是我，一拉开你的衣服跟学历，你还是一只猴子呀！&lt;/p&gt;
+&lt;p&gt;所以我们今天要做的是要了解，真正能够在逆境当中成长的&lt;strong&gt;动机&lt;/strong&gt;是因为逆境当中勇于面对问题，在面对问题当中，你由于没有顺境了，没有贵人了，没有机运了，你能够有的什么呢，两双拳头，两只脚，你要自己打出一片天，在这种过程当中，你如果成功了是你的成功，失败了，好歹你奋斗过一次嘛，这样的人生，不是比遇到贵人更值得我们欣赏吗？这样的人生不是不管成，不管败，好歹轰轰烈烈吗？ 如果今天我们在帝王家，从小养于深宫富人之手，就算有多大基业，这边有诸葛亮帮忙，那边有刘伯温妙算，底下这些一列开来，都是岳飞，要不然就是韩信的，这样当皇帝，你有成长吗？我不知道啊。&lt;/p&gt;
+&lt;p&gt;所以我们要了解，逆境让人的本质成长了，让我们的历练成长了，让我们心智坚韧了，让我们看的东西，跟顺境家的小孩子看的不一样。他们看得到光鲜的门面，我们看得到厕所，他们看得到锦衣玉食，我们看得到馊水桶。这样眼界的不同，难道不是一种成长，难道不是我们所希望我们的小孩子能够偶尔试一下的成长吗？父母亲是父母亲，成长却是希望小孩子自己去历练，这两者是不一样的，谢谢！&lt;/p&gt;
+&lt;h3 id=&#34;金钱是万恶之源吗-胡渐彪结辩反方&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#金钱是万恶之源吗-胡渐彪结辩反方&#34;&gt;#&lt;/a&gt; 金钱是万恶之源吗 胡渐彪结辩（反方）&lt;/h3&gt;
+&lt;p&gt;谢谢。其实刚才一连串的争议都起源于对方一辩在开展命题的时候所犯下的几个关键错误。一开始他们弄下了两个前提，用这两个前提开展他们的立论。第一，他告诉我们，今天所谓的 “万” 不指全部。但是对方辩友这一种用《辞海》断章取义，只看一个 “万” 字，不看 “万恶之源” 这四个字，是不是有点离题之嫌呢？对方辩友的第二个假定是告诉我们，今天人本身是没有恶性的。这个恶是从哪里来呢？是外在诱惑我出来。然后他们就告诉我们说，钱以后怎么重要，怎么诱惑我做恶事。我想请问各位，真的是人没有恶的本性吗？请大家抚着自己的良心，人类本身的贪婪，人类本身的那种兽性是从哪里来的呢？如果钱是万恶之源，那钱还没有发明之前，这种兽性跟贪婪性为什么就突然间不叫作恶了呢？&lt;/p&gt;
+&lt;p&gt;根据这两个前提，他们开展出三个论点。第一个，他告诉我们钱本身现在能够等价交换，所以钱是万恶之源。那我想请问各位，为什么钱能够有等价交换这种高尚的能力呢？是因为经济发展。按对方辩友的逻辑，是不是要告诉我们，经济发展其实真的是万恶之源呢？第二个论点，他告诉我们，今天钱能够成为一个人的精神价值。但是这真的是一个必然判断吗？今天一个丈夫殴打他的老婆，本身可能是因为工作上不满意，可能因为情绪的宣泄，这和钱有什么关系呢？第三，他告诉我们，今天钱本身是一个目的，是一个工具，因此是源。对方辩友其实这个已经有点阐述错误了，目的和工具不等于一个推导的导因。我们说目的和原因有什么差别呢？一者是说从哪里来，一者是说到哪里去。如果两者是等同在一起的话，那么目的和原因有什么差别。&lt;/p&gt;
+&lt;p&gt;对方辩友又告诉我们，今天钱本身是一个很重要的手段。是手段就说明它是一个中性的体，如果是中性体的话，我想请问各位，怎么还会突然间变成了万恶之源呢？对方提出了大量的例子，告诉我们说有很多人贪钱。姑且不论贪钱不贪钱的问题，我们只要看一看，这个贪钱本身只是众恶之中的一小部分，如何构成万恶？再者，如果我们说他里面的例子是贪钱的话，那么我请问各位，是钱是恶之源，还是贪是恶之源呢？对方辩友这种只看一半，不看另一半的做法能够让我们大家信服吗？&lt;/p&gt;
+&lt;p&gt;而今天我们认为钱不是万恶之源，不是我们想为钱多说好话，而是想给钱一个确切的定位。我们看得到，有人为了钱确然去做恶事，有人为了钱也去做善事啊！今天我为了钱奉公守法赚钱，但是与此同时帮助国家成长，是善是恶呢？如果这个万恶之源一时会推出善，一时又会推出恶，那它怎么还会是万恶之源呢？如果对方辩友告诉我们，这个钱能够推导出万恶之源，又能够推导出万善之源，那就是告诉我们，它有时是万恶之源，有时突然间又不是万恶之源。那您是不是一半论证自己立场，一半论证我方立场了呢？&lt;/p&gt;
+&lt;p&gt;我们姑且把那善的一半掩起来不看，我们效法对方辩友，只看恶的那一部分好不好？就算在恶的那一个部分，人类学家告诉我们，在社会上出现的恶，基本上可以包含在四个层面：第一个本身所说的就是极端的信念带来的恶；第二个就是非理性价值的违反；第三个就是非分之情欲。像邪教啊，恐怖分子啊，塔利班毁佛事件，甚至到南京大屠杀，这些恶和钱有什么关系呢？还是对方四辩想告诉我们，由于这些恶都没有钱涉及在内，所以他们就突然间不是恶呢？那我突然间恍然大悟，原来日本人哪，他们篡改教课书是有根据的，那个不叫作恶，因为没有钱涉及在内。就算我们今天把这三个部分没有和钱有关系的恶都撇开不谈，我们只看有涉及钱的恶好不好呢？有涉及钱又怎么样？代表钱是万恶之源吗？诚如刚才所说的贪钱，钱是恶，还是贪是恶？对方辩友把 “一” 当作 “万” 的推论方式能够论证万恶之源吗？在数学上，把 “一” 当作 “万”，本身就是一个推断错误；在逻辑上，以一当万，以偏概全，就不能够是一个有效的推论；在内容上，盖着一大部分，只看一小部分，就是以偏概全的诡辩，只看恶的那一部分，有关系到恶就当作恶的源是来自钱，是第二重诡辩哪！&lt;/p&gt;
+</content>
+        <category term="辩论" />
+        <updated>2024-12-10T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/12/11/2024-12-11-techstrack/</id>
+        <title>技术栈</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/12/11/2024-12-11-techstrack/"/>
+        <content type="html">&lt;h1 id=&#34;技术栈大一上&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#技术栈大一上&#34;&gt;#&lt;/a&gt; 技术栈（大一上）&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;深度学习基础概念
+&lt;ol&gt;
+&lt;li&gt;pytorch 框架基本操作&lt;/li&gt;
+&lt;li&gt;基本库的调用&lt;/li&gt;
+&lt;li&gt;numpy pandas 的使用&lt;/li&gt;
+&lt;li&gt;可视化工具 matplotlib seaborn 的使用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;神经网络基础 mlp cnn rnn transformer 的构建和使用（来自于学习了花书和参加字节 AI 青训）
+&lt;ul&gt;
+&lt;li&gt;能够独立实现简单深度学习模型。&lt;/li&gt;
+&lt;li&gt;了解如何调试模型和提升模型性能。&lt;/li&gt;
+&lt;li&gt;了解对图像和文字进行数据预处理的方法 过拟合与欠拟合的识别与解决 学习率调整方法&lt;/li&gt;
+&lt;li&gt;会使用基本的损失函数和优化器&lt;/li&gt;
+&lt;li&gt;会基于 langchain 实现有检索和记忆功能的聊天机器人&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;工具的使用
+&lt;ol&gt;
+&lt;li&gt;能使用 Streamlit 和 Gradio 等 ui 工具部署机器学习模型&lt;/li&gt;
+&lt;li&gt;会使用 docker 部署模型&lt;/li&gt;
+&lt;li&gt;会使用 PyQT 制作简单桌面应用&lt;/li&gt;
+&lt;li&gt;会使用 sqlite3 库简单进行数据库操作&lt;/li&gt;
+&lt;li&gt;会使用 LangChain（一个 AI 工具链）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;语言能力
+&lt;ol&gt;
+&lt;li&gt;掌握 Python 的基本语法和常用库 刷了 50 道 python 算法题&lt;/li&gt;
+&lt;li&gt;掌握 C 的基本语法和数据结构的基础知识&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+        <category term="技术" />
+        <updated>2024-12-10T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/12/11/2024-12-15-why/</id>
+        <title>跟你分享一篇我写的故事</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/12/11/2024-12-15-why/"/>
+        <content type="html">&lt;blockquote&gt;
+&lt;p&gt;“我之所以喜欢熬夜，是因为在凌晨 1 点到 5 点这段时间，世界很安静，没有人对我有任何期待和要求，我可以盯着墙看 4 个小时并且也不会有任何后果。”&lt;br&gt;
+ 小孩子的感受是成年人的放大版。 虽然这么说 2 年前的自己不甚贴切，可如今看这篇文章我很难感同身受。对于这篇文章探讨的问题，我也有想说的想表达的。但如今想想不如让答案飘散在风里。&lt;br&gt;
+因为我们都得向前看&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;爱已成歌&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#爱已成歌&#34;&gt;#&lt;/a&gt; 爱已成歌&lt;/h2&gt;
+&lt;p&gt;2022/9.4~9.12&lt;/p&gt;
+&lt;h3 id=&#34;藻&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#藻&#34;&gt;#&lt;/a&gt; 藻&lt;/h3&gt;
+&lt;p&gt;我要讲个故事给你听。&lt;/p&gt;
+&lt;p&gt;“藻” 是藻的名字。“圆球” 是藻的姓。它是藻的一部分，它被叫作水华。&lt;/p&gt;
+&lt;p&gt;它的家是一片油膜织成的网，是它们九代人编成的，它，及它的爸爸，爷，曾躺在池塘边角的这一寓小室中。它把那个摩肩接踵的地方叫做家。&lt;/p&gt;
+&lt;p&gt;想知道它的结局吗？不，它没有死在网里，而是在一片盖玻片下。&lt;/p&gt;
+&lt;p&gt;时间不会允许它记得离家的旅程，它的一生只有一只放大的黑色瞳仁见证眼睛的反射里它第一次看到自己：挣扎蠕动的纤毛，伸缩泡被撑到身体的倍大，紫青色的液体从无能为力的每一个缝隙侵入………… 最终它死在那个春乍起的夜晚，在身躯难以忍受的欲火的煎熬中，蓝色透明的膜被扭入一种比绮丽的色彩，排山倒海无声的咆哮中，它成了孩子嘴上的肥皂泡，其内绿色的红色的物质仿佛新生命般等待着破茧成蝶。又一声惊蛰炸响，虫鸣啸中，它的身体终于消失，内部的物质在暗野里绽出烟花状的色彩，接着是一片死寂。&lt;/p&gt;
+&lt;p&gt;就像站在烟火表演的间歇，火树银花的震撼还没消退，之后的应接不暇还来。天空是五彩斑斓的黑。恰似没人在乎的藻的沉默。&lt;/p&gt;
+&lt;p&gt;在那些并不显孤寂的黑色中，一些生命死去了，一些生命诞生着。&lt;/p&gt;
+&lt;p&gt;也许这是个有些疯狂的梦，也许这只是看到某部 B 站视频后呢喃的呓语，并不重要，因为梦醒了。&lt;/p&gt;
+&lt;h3 id=&#34;烟花夜&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#烟花夜&#34;&gt;#&lt;/a&gt; 烟花夜&lt;/h3&gt;
+&lt;p&gt;你的确走的有点匆忙了，连道别都没来得及。三个月不算短，可还来不及留一个灵魂。也许是从你来的那天起，我迷上了月亮。月亮里面是你的声。凌晨三点，它让一切喧嚣都显得不解风情。&lt;/p&gt;
+&lt;p&gt;一个月有三十天，我最喜欢十四的月亮。&lt;/p&gt;
+&lt;p&gt;十四的月亮没有满月明亮，但满月之后的日子里亏缺聚沙成塔，无声的黑吞噬了它的眼泪。十四的月亮还拥有明天，明天它会更亮、更圆、更有能承载羁旅的眼神。&lt;/p&gt;
+&lt;p&gt;百年前的她愿意为了一个眼神奔走一生，只因十四的月亮永远高挂在那幅墟的画上。他已消失在历史的弧光里，她却还携着那个眼神在大河剧的风里逡巡。穷尽一生，她已白发苍苍，他已成为东北无名坟冢的脉脉孤魂。&lt;/p&gt;
+&lt;p&gt;她于是自忖那漫长一生的追逐。&lt;/p&gt;
+&lt;p&gt;她喜欢的是什么？&lt;/p&gt;
+&lt;p&gt;她喜欢的是追逐着他的自己。&lt;/p&gt;
+&lt;p&gt;烟火就在这一刻上升，绽放，再消失。&lt;/p&gt;
+&lt;p&gt;火箭上升，划破五彩斑斓的黑。&lt;/p&gt;
+&lt;p&gt;你在犹疑，你在转身，你在离开。&lt;/p&gt;
+&lt;p&gt;如果这都不算爱，？&lt;/p&gt;
+&lt;h3 id=&#34;夏天&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#夏天&#34;&gt;#&lt;/a&gt; 夏天&lt;/h3&gt;
+&lt;p&gt;与春天的黏腻，秋天的萧瑟不同，夏天直率，真诚，包容你的安逸、放肆。&lt;/p&gt;
+&lt;p&gt;我在夏天的故事中留了许多位点，这样可以在没有爱的秋天拿出来怀念。&lt;/p&gt;
+&lt;p&gt;人总是怀念自己的夏天， 并用自己的移情对象来定义它。但是 8 月 17 日不无穷无尽，那颗苹果，那只气球，你只能抛弃，你从没有过选择。&lt;/p&gt;
+&lt;p&gt;当热浪带来的潮气打湿你微醺的颊面，你会哭的，相信我。不会有下一个六岁的夏天，不会有下一个十六岁的黎明，下一个十六岁的暴雨，下一个六岁的月光，下一首十六岁的歌，下一个十六岁的你。&lt;/p&gt;
+&lt;p&gt;夏天永远不会结束。走的人是你 。还有你的十六岁。&lt;/p&gt;
+&lt;p&gt;不要沉默，好吗？我求你。&lt;/p&gt;
+&lt;h3 id=&#34;虹&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#虹&#34;&gt;#&lt;/a&gt; 虹&lt;/h3&gt;
+&lt;p&gt;「当爱已成歌，唱歌的人就变成风景。」来吧，走上阳台去找她。不是在天，而是在秋天。&lt;/p&gt;
+&lt;h3 id=&#34;流行病&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#流行病&#34;&gt;#&lt;/a&gt; 流行病&lt;/h3&gt;
+&lt;p&gt;网课时语文老师会在开全体禁言的同时问：听得见我说话吗，我们总是齐协力地沉默着。她没有得到回答，便开始抽人说话。我们围列在一张虚拟长桌前，像卑劣的门徒等待耶和华的审判，最后的预言随时要降临，仿佛给予某个人万劫不复的结局。&lt;/p&gt;
+&lt;p&gt;如今只有我一个人，常常坐在现实的桌前，回馈我的只有平等的沉默。&lt;/p&gt;
+&lt;p&gt;我知道新冠摧毁了一些东西，但我也年轻到无力攀摹疫情之前的情状。建末年的诗人写 “昔日游处，酒酣耳热”，又写 “当此时，忽然不自知乐。” 我过疫情中惶惶度日的人如何在案几厅橱中踌躇不前，他回过头，眼里全是荤八素的碎梦。那无从探寻的光还在闪烁，像加德里大殿沉默的风铃。&lt;/p&gt;
+&lt;p&gt;人们说这种病的后遗症是失去嗅觉，我没有亲见过这病发生在身周的场景但已罹经它可怖的症状，频繁的网课暧昧了对话中的烟火气，红色的惊叹从忙乱到无视仿佛只用了一晚。于是，看到对方正在输入的标识出现再失，直到迷蒙中入梦。想说的话梗在喉头，而沉默的伤害已经种下。&lt;/p&gt;
+&lt;p&gt;我知道五雷轰顶的灾祸总在不知名的地区里降下，只是还没有到我头上。是在无益的消磨时光，以至于连呼吸都变得滚烫。等这心中的病真的结束我想给自己立块墓碑，墓志铭是一片空白。那些日子里我杀死了我自己，用尽一切龌龊难言的情感刺伤他人，撕开那些破开的伤口，沉默的病毒无不入，终于病入膏肓，在没有烟花的子夜结出青涩的果实，流出欲望的来，饥渴地把这病传染给所有试着品尝它的人。&lt;/p&gt;
+&lt;h3 id=&#34;一个没有信仰的人的虔诚&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#一个没有信仰的人的虔诚&#34;&gt;#&lt;/a&gt; 一个没有信仰的人的虔诚&lt;/h3&gt;
+&lt;p&gt;不要猜测风的声音，吹在每个人身上都是不同的低吟。&lt;/p&gt;
+&lt;h3 id=&#34;见证者&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#见证者&#34;&gt;#&lt;/a&gt; 见证者&lt;/h3&gt;
+&lt;p&gt;尽管我的故乡在城中喧哗的街巷，我总觉得那个地方是一座山。山笼盖在片紫色的烟幕里，山下是沾满烟火气的人间和莽原。&lt;/p&gt;
+&lt;p&gt;也许城中村便是这样一个地方：楼下卖鸡蛋糕的娅娅定格住了小镇的时间十年尺度的见证被她亘古不变妆颜暧昧在西安古板的空气里。走入尚在机地步进的街，小店大都有十年往上的历史了，新成的房舍的光鲜不会在那小镇驻足过久，它会顷刻被宋明的古建筑散出的煤灰气沾染。&lt;/p&gt;
+&lt;p&gt;离家几年，远房亲戚的脸有的已模糊到可憎，阿拉伯语像一棵树，栓住了有人，强迫他们用阿米乃假装虔诚，强迫他们把小镇围成一座山。&lt;/p&gt;
+&lt;p&gt;余华说，故乡是心正在流血的地方。也许某一天你推开房门，走向烁烁的原，心也便留在老屋里随摆钟有气无力地搏动，因此只有离开地理上的处，那里才成为故乡。于是逐渐从柳暗花明的亲历者身分脱离，远极了的镇，终于也仿佛有了生命。&lt;/p&gt;
+&lt;p&gt;它永远动态地变化着，你洞察不了那些瞬息的改变，就算看到了，你也会迫自己不去弄懂。&lt;/p&gt;
+&lt;p&gt;就是突然影影绰绰地觉知，山是地质年代缓慢变化的浪。想象中，它遍布黄，不带一寸植衣，像小镇喇叭悚人的讲经声，声音被时光扯得老长，记也随之七零八落。&lt;/p&gt;
+&lt;p&gt;浪是要涌进海里的，但海洋不似浪的黄色。那是课本中才有的熹微的颜色想，那是克莱因蓝过气后重象征其迷勾的静谧碧蓝。&lt;/p&gt;
+&lt;p&gt;在藻死亡的那天，在烟火明灭的子夜，在歌声萦绕的月光中，在瘟疫徘徊人世间，我要牵起你的手。&lt;/p&gt;
+&lt;p&gt;给你出生前故乡一朵黄玫瑰的记忆，给我男子气概的全部来源， 给你一无信仰人的虔诚。&lt;/p&gt;
+&lt;p&gt;当爱已成歌，我们跃入浪里。&lt;/p&gt;
+&lt;p&gt;一直游到海水变蓝。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;后记&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#后记&#34;&gt;#&lt;/a&gt; 后记&lt;/h3&gt;
+&lt;p&gt;有一天我发现，生活突然恢复到了一种真空状态，人变得更加充盈、生动、完整。自此，待他人无力招架生活压力之时，我们却会再次变得完整。&lt;/p&gt;
+&lt;p&gt;南方夏日白昼的热情总让人喘不过气，哪怕有时下了一阵雨，也总透着精疲力尽的感觉&lt;/p&gt;
+&lt;p&gt;到了夜晚，路灯三两盏错落在路边，多的是忘我的飞虫隔着不可能飞越的灯罩扑去，一次又一次的，至死不渝。&lt;/p&gt;
+&lt;p&gt;从前我想象这场景，如今将亲见这场景。我自以为两年前我的选择是离经叛道不顾后果的，但现在我已不会这么做了。&lt;/p&gt;
+&lt;p&gt;我只想告诉你一切都还好。&lt;/p&gt;
+</content>
+        <category term="创作" />
+        <updated>2024-12-10T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/12/09/2024-12-09-wait/</id>
+        <title>A picture of soul</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/12/09/2024-12-09-wait/"/>
+        <content type="html">&lt;pre&gt;
+ __      __  __                __                         ___                             
+/\ \  __/\ \/\ \              /\ \__      __             /\_ \                            
+\ \ \/\ \ \ \ \ \___      __  \ \ ,_\    /\_\    ____    \//\ \     ___   __  __     __   
+ \ \ \ \ \ \ \ \  _ `\  /&#39;__`\ \ \ \/    \/\ \  /&#39;,__\     \ \ \   / __`\/\ \/\ \  /&#39;__`\ 
+  \ \ \_/ \_\ \ \ \ \ \/\ \L\.\_\ \ \_    \ \ \/\__, `\     \_\ \_/\ \L\ \ \ \_/ |/\  __/ 
+   \ `\___x___/\ \_\ \_\ \__/.\_\\ \__\    \ \_\/\____/     /\____\ \____/\ \___/ \ \____\
+    &#39;\/__//__/  \/_/\/_/\/__/\/_/ \/__/     \/_/\/___/      \/____/\/___/  \/__/   \/____/
+                                                                                          
+                                                                                        
+ __  __                             __    __                  __                              
+/\ \/\ \                           /\ \__/\ \      __        /\ \      __                     
+\ \ \/&#39;/&#39;     __     __   _____    \ \ ,_\ \ \___ /\_\    ___\ \ \/&#39;\ /\_\    ___      __     
+ \ \ , &lt;    /&#39;__`\ /&#39;__`\/\ &#39;__`\   \ \ \/\ \  _ `\/\ \ /&#39; _ `\ \ , &lt; \/\ \ /&#39; _ `\  /&#39;_ `\   
+  \ \ \\`\ /\  __//\  __/\ \ \L\ \   \ \ \_\ \ \ \ \ \ \/\ \/\ \ \ \\`\\ \ \/\ \/\ \/\ \L\ \  
+   \ \_\ \_\ \____\ \____\\ \ ,__/    \ \__\\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \_\ \____ \ 
+    \/_/\/_/\/____/\/____/ \ \ \/      \/__/ \/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/_/\/___L\ \
+                            \ \_\                                                      /\____/
+                             \/_/                                                      \_/__/ 
+&lt;/pre&gt;</content>
+        <category term="随便聊聊" />
+        <updated>2024-12-08T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/10/10/2024-10-10-feelings/</id>
+        <title>感叹一下</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/10/10/2024-10-10-feelings/"/>
+        <content type="html">&lt;h1 id=&#34;就是好累&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#就是好累&#34;&gt;#&lt;/a&gt; 就是好累&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;原因大概是没有玩原神？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;不过我觉得导员说的对 现在给自己不断加码 到时候闲下来了会卷不起来的&lt;/p&gt;
+&lt;p&gt;我想尽可能地拓展我的技术栈 但是学新知识又不是一周以内就能搞定的事&lt;/p&gt;
+&lt;p&gt;我觉得至少在前两年我想尽可能地拓展方向 但是我又能做到什么地步呢 我对这一点抱有充分的好奇心&lt;/p&gt;
+&lt;p&gt;我冷静的审视自己&lt;br&gt;
+是我循环的不够多&lt;br&gt;
+还是根本这个逻辑就实现不了&lt;br&gt;
+为什么要浪费时间呢&lt;br&gt;
+如果不浪费时间为什么这个题可以被解决呢&lt;br&gt;
+还是说我太沉浸在改题的氛围里了&lt;br&gt;
+还是说我根本就做不了这道题呢&lt;/p&gt;
+&lt;p&gt;正在跑模型 epoch28 时准确率 70% 有感&lt;br&gt;
+写于 2024 年 10 月 11 日 02:22AM&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <updated>2024-10-09T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/10/06/2024-10-06-HowToDebate/</id>
+        <title>怎么打辩论</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/10/06/2024-10-06-HowToDebate/"/>
+        <content type="html">&lt;h1 id=&#34;怎么打辩论&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#怎么打辩论&#34;&gt;#&lt;/a&gt; 怎么打辩论&lt;/h1&gt;
+&lt;h2 id=&#34;辩题分类&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#辩题分类&#34;&gt;#&lt;/a&gt; 辩题分类&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;政策辩
+&lt;ul&gt;
+&lt;li&gt;必须得从这四部一步一步拆，不能跳步
+&lt;ul&gt;
+&lt;li&gt;需求性 (这个问题需要被解决而且不会自愈)&lt;/li&gt;
+&lt;li&gt;根属性 (必须被某方解决)&lt;/li&gt;
+&lt;li&gt;解决力 (正方提出的方法有解决效益)&lt;/li&gt;
+&lt;li&gt;损益比&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;价值辩&lt;/li&gt;
+&lt;li&gt;事实辩&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;辩论的准备-以立论为重点&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#辩论的准备-以立论为重点&#34;&gt;#&lt;/a&gt; 辩论的准备 以立论为重点&lt;/h2&gt;
+&lt;h3 id=&#34;1-准备解题-定义&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#1-准备解题-定义&#34;&gt;#&lt;/a&gt; 1. 准备解题 定义&lt;/h3&gt;
+&lt;ol start=&#34;0&#34;&gt;
+&lt;li&gt;10 分左右 记录第一时间的想法 跳出预设立场&lt;/li&gt;
+&lt;li&gt;资料收集
+&lt;ul&gt;
+&lt;li&gt;百度 谷歌
+&lt;ul&gt;
+&lt;li&gt;政府报告 权威媒体 善用精确搜索 国家统计局统计数据…&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;b 站视频 自媒体解读 过去的辩论视频等&lt;/li&gt;
+&lt;li&gt;小红书 知乎 寻找例子 场景化碎片化生活化的解读 引用最好表原文出处 方便后续找&lt;/li&gt;
+&lt;li&gt;知网论文&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;解题 定义
+&lt;ul&gt;
+&lt;li&gt;拆解题目的关键词 切入点 比如城市和农村谁更孤独 从城乡发展 / 个人感受切入 立场思考也会不同&lt;/li&gt;
+&lt;li&gt;要对讨论环境做切割&lt;/li&gt;
+&lt;li&gt;定义
+&lt;ul&gt;
+&lt;li&gt;内涵
+&lt;ul&gt;
+&lt;li&gt;词典里怎么讲的 可以引用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;外沿
+&lt;ul&gt;
+&lt;li&gt;归纳 往外延伸 比如 说贫穷 多少算贫穷&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;公平性
+&lt;ul&gt;
+&lt;li&gt;定义是中性的留下辩论空间最好&lt;/li&gt;
+&lt;li&gt;如果有偏向 一定要给出合理的理由&lt;/li&gt;
+&lt;li&gt;定义越偏 立场越难守住 重要的是说服力&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;解题 -- 定义切割
+&lt;ul&gt;
+&lt;li&gt;范围切割 讨论范围内&lt;/li&gt;
+&lt;li&gt;定义的切割 合理的解释定义 比如偶像真的一定有狂热粉丝吗&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;2-论点判准价值&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#2-论点判准价值&#34;&gt;#&lt;/a&gt; 2. 论点判准价值&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;论点
+&lt;ul&gt;
+&lt;li&gt;内部融洽
+&lt;ul&gt;
+&lt;li&gt;比如说怎么在保证政策好用的基本上不滥用&lt;/li&gt;
+&lt;li&gt;要符合常识或者有让人信服的理由&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;论证义务
+&lt;ul&gt;
+&lt;li&gt;不能大包大揽 (就是只留好的切割坏的) 要留论证空间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;举证责任
+&lt;ul&gt;
+&lt;li&gt;谁违反大众认知谁举证 例子 实例 逻辑 数据等&lt;/li&gt;
+&lt;li&gt;谁提出谁举证  比如哲学家说的话 你要先解释说明&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;论证过程 数据例子学理在精不在多
+&lt;ul&gt;
+&lt;li&gt;数据
+&lt;ul&gt;
+&lt;li&gt;数据的阐释非常关键 前因后果 怎么来的&lt;/li&gt;
+&lt;li&gt;包括调查方法和调查样本 (强调数据的范围)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;例子
+&lt;ul&gt;
+&lt;li&gt;情景 (建立在常识的基础上 但是无法解决宏观的大问题 因为具体的事情可能缺乏代表性)&lt;/li&gt;
+&lt;li&gt;例子最好的用法是用来证伪&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;学理
+&lt;ul&gt;
+&lt;li&gt;心理学机理 补充说明数据 观点等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;标准
+&lt;ul&gt;
+&lt;li&gt;标准导向价值 核心思想&lt;/li&gt;
+&lt;li&gt;所以价值和标准要统一&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;3-设计架构&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#3-设计架构&#34;&gt;#&lt;/a&gt; 3. 设计架构&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;论证架构上&lt;/li&gt;
+&lt;li&gt;搏斗型
+&lt;ul&gt;
+&lt;li&gt;不断去推翻对面的论，可能你最终你自己的论它也收到了很大的挑战。&lt;/li&gt;
+&lt;li&gt;就对方说得不好的一点都没成立，哪怕我说这个东西好，可能就非常微不足道，一个小点的东西，但是我最终比对方还事情还那么一点点东西，凭那一点点我就可以影响比赛。&lt;/li&gt;
+&lt;li&gt;跑步型
+&lt;ul&gt;
+&lt;li&gt;就不管对面讲什么，你就跑不下，一直跑下去，就不要管，就一直推到不管对面讲什么，就不断地去把你自己论给推下去。这场比赛你如果你的最终，你的论，你把它推完了，就好&lt;/li&gt;
+&lt;li&gt;推导出的最终价值的现实意义和思考性是决定胜负的关键&lt;/li&gt;
+&lt;li&gt;做论的展延 拓展论证义务 比如说从 xx 是恶吗转到什么是恶，什么导致了恶&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;立论上
+&lt;ul&gt;
+&lt;li&gt;逻辑链可以很短 很易证 “地板论” 防守的宽广性就会不够强 可以通过中间多找例子数据等&lt;/li&gt;
+&lt;li&gt;论证比较正常 复杂的 主要就是比较导向的价值的现实性和深度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;4-攻防-战场问题&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#4-攻防-战场问题&#34;&gt;#&lt;/a&gt; 4. 攻防 战场问题&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;攻 质询的方式&lt;/strong&gt; 写一个从这个结构出发的质询稿 四个人一起写自由辩稿 核心在于让对手说出你想要的话
+&lt;ul&gt;
+&lt;li&gt;摸
+&lt;ul&gt;
+&lt;li&gt;搞清楚对方讨论的事情&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;打
+&lt;ul&gt;
+&lt;li&gt;第一个就是你去找他逻辑里面有没有什么逻辑漏洞 例子数据&lt;/li&gt;
+&lt;li&gt;第二种从例子出发说明对方你这个例子他其实并不能证明他你想要推倒这个逻辑列，就是你这个例子对这个逻辑链这边他是不适用的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;结
+&lt;ul&gt;
+&lt;li&gt;落脚点 双方共识 对方没总结到的 我的独到观点&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;接受质询 (反驳)
+&lt;ul&gt;
+&lt;li&gt;三种方式
+&lt;ul&gt;
+&lt;li&gt;削弱&lt;/li&gt;
+&lt;li&gt;拉平&lt;/li&gt;
+&lt;li&gt;对抗&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;削弱
+&lt;ul&gt;
+&lt;li&gt;当我们在讨论 xx 我们在讨论什么&lt;/li&gt;
+&lt;li&gt;重要的不是 xx 而是 xx&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;拉平 (对他们找到的价值进行反驳)&lt;/li&gt;
+&lt;li&gt;对抗 (反驳 找例子 找数据), 比起找价值会弱很多&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;多层归因
+&lt;ul&gt;
+&lt;li&gt;多找方向让论证更详实&lt;/li&gt;
+&lt;li&gt;多角度思考&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;思想上不能绕进去 坚定防守回归理论&lt;/li&gt;
+&lt;li&gt;思考意识
+&lt;ul&gt;
+&lt;li&gt;不要天然认为什么是成立的 要敢于去质疑常识&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;结辩
+&lt;ul&gt;
+&lt;li&gt;落脚点是价值&lt;/li&gt;
+&lt;li&gt;要先总结战场划分 给大家留下更多记忆点&lt;/li&gt;
+&lt;li&gt;价值倡导 也可以进行和对方的比较&lt;/li&gt;
+&lt;li&gt;警惕精英的傲慢 打开视角&lt;/li&gt;
+&lt;li&gt;价值–原议题
+&lt;ul&gt;
+&lt;li&gt;公平正义与社会效益&lt;/li&gt;
+&lt;li&gt;个人与集体&lt;/li&gt;
+&lt;li&gt;感性与理性&lt;/li&gt;
+&lt;li&gt;男性与女性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;5-赛前准备&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#5-赛前准备&#34;&gt;#&lt;/a&gt; 5. 赛前准备&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;模拟赛&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;三段论逻辑学基础&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#三段论逻辑学基础&#34;&gt;#&lt;/a&gt; 三段论 (逻辑学基础)&lt;/h2&gt;
+&lt;h3 id=&#34;范畴-aeio的命题分类方式&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#范畴-aeio的命题分类方式&#34;&gt;#&lt;/a&gt; 范畴 AEIO 的命题分类方式&lt;/h3&gt;
+&lt;figure class=&#34;highlight css&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs css&#34;&gt;范畴AEIO是传统逻辑学中对命题的一种分类方式，它包括四种基本的命题类型：&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-number&#34;&gt;1&lt;/span&gt;. **&lt;span class=&#34;hljs-selector-tag&#34;&gt;A&lt;/span&gt;命题**（全称肯定命题）：表示“所有S是&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;”的命题，即认为某个类别的所有成员都具有某种属性。例如，“所有的金属都是导电的”。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-number&#34;&gt;2&lt;/span&gt;. **E命题**（全称否定命题）：表示“所有S不是&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;”的命题，即认为某个类别的所有成员都不具有某种属性。例如，“所有的气体都不是液体”。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-number&#34;&gt;3&lt;/span&gt;. **&lt;span class=&#34;hljs-selector-tag&#34;&gt;I&lt;/span&gt;命题**（特称肯定命题）：表示“有的S是&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;”的命题，即认为某个类别中至少有一个成员具有某种属性。例如，“有的鸟类是会飞的”。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-number&#34;&gt;4&lt;/span&gt;. **O命题**（特称否定命题）：表示“有的S不是&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;”的命题，即认为某个类别中至少有一个成员不具有某种属性。例如，“有的鸟类是不会飞的”。&lt;br&gt;&lt;br&gt;这四种命题类型是构建逻辑推理和三段论的基础。在逻辑学中，通过这些命题的不同组合，可以形成有效的推理形式。例如，从“所有S是&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;”和“有的S是&lt;span class=&#34;hljs-selector-tag&#34;&gt;Q&lt;/span&gt;”可以推出“有的&lt;span class=&#34;hljs-selector-tag&#34;&gt;P&lt;/span&gt;是&lt;span class=&#34;hljs-selector-tag&#34;&gt;Q&lt;/span&gt;”，但这种推理并不是在所有情况下都有效，需要遵循特定的逻辑规则。&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;判断三段论正误&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#判断三段论正误&#34;&gt;#&lt;/a&gt; 判断三段论正误&lt;/h3&gt;
+&lt;h2 id=&#34;-code1-&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#-code1-&#34;&gt;#&lt;/a&gt; &lt;figure class=&#34;highlight markdown&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs markdown&#34;&gt;要判断一个三段论是否正确，需要考虑几个关键点：&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;1.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**项的数量**&lt;/span&gt;：一个有效的三段论必须恰好包含三个不同的项。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;2.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**中项的周延性**&lt;/span&gt;：中项在前提中至少有一次是周延的（即涵盖所有可能的情况）。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;3.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**前提的形式**&lt;/span&gt;：三段论的有效性取决于前提的形式是否符合有效的逻辑结构。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;4.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**结论的形式**&lt;/span&gt;：结论必须遵循从前提中得出的有效逻辑形式。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;5.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免非法形式**&lt;/span&gt;：必须避免一些逻辑上不允许的形式，比如“四项错误”（一个三段论中出现了四个不同的项）。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;6.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免歧义**&lt;/span&gt;：项必须在整个推理过程中保持相同的意义。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;7.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免倒置**&lt;/span&gt;：中项不能同时作为两个前提的主项或谓项。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;8.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免无分配**&lt;/span&gt;：如果一个项在前提中不周延，那么它在结论中也不能是周延的。&lt;br&gt;&lt;br&gt;一个三段论由两个前提和一个结论组成，每个前提和结论都是一个标准形式的命题（A、E、I、O）。例如：&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**大前提**&lt;/span&gt;：所有M是P（A型命题）&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**小前提**&lt;/span&gt;：所有S是M（I型命题）&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**结论**&lt;/span&gt;：所有S是P（A型命题）&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;一个例子&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;结婚不用读书&lt;br&gt;
+女孩子要结婚&lt;br&gt;
+女孩子不要读书&lt;br&gt;
+从逻辑学的角度来证伪这个三段论，我们可以按照以下步骤进行：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;识别三段论的组成部分&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;大前提：结婚不用读书。&lt;/li&gt;
+&lt;li&gt;小前提：女孩子要结婚。&lt;/li&gt;
+&lt;li&gt;结论：女孩子不要读书。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;分析前提的有效性&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;大前提 “结婚不用读书” 是一个错误的全称命题，因为它假设了所有结婚的人都不需要读书，这显然是不准确的。结婚是一个法律和社会的契约，而读书是个人获取知识和技能的过程，两者之间没有必然的逻辑联系。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;检查中项的周延性&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在这个三段论中，“结婚” 作为中项，但在大前提中并不是周延的，因为它没有涵盖所有结婚的人。大前提只是一个错误的假设，而不是一个普遍的事实。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;检查形式的有效性&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这个三段论的形式是：所有 A 非 B，所有 C 是 A，所以所有 C 非 B。&lt;/li&gt;
+&lt;li&gt;这是一个错误的逻辑形式，因为它从一个错误的全称命题（大前提）出发，试图推导出一个普遍的结论。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;分析结论的合理性&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;结论 “女孩子不要读书” 是基于错误的前提得出的，即使女孩子要结婚，这并不意味着她们不应该读书。教育和婚姻是两个独立的领域，一个人可以在结婚的同时继续追求教育。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;指出逻辑谬误&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这个三段论犯了 “不当概括” 的逻辑谬误，即从一个错误的或者不具代表性的前提推广到一个普遍的结论。&lt;/li&gt;
+&lt;li&gt;它还犯了 “偷换概念” 的谬误，将 “结婚” 和 “读书” 这两个不同的概念混为一谈。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;提供反例&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可以提供反例来证明结论的错误。例如，许多已婚女性都是大学毕业生，并且继续在婚后进行学术研究和职业发展。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;得出结论&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;由于大前提的错误和逻辑形式的无效，这个三段论不能得出有效的结论。从逻辑学的角度来看，这个推理是无效的，应该被证伪。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;常见的论证错误&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#常见的论证错误&#34;&gt;#&lt;/a&gt; 常见的论证错误&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;诉诸暴力&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight markdown&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs markdown&#34;&gt;“诉诸暴力”（Appeal to Force）是一种逻辑谬误，也称为“诉诸武力”或“强权逻辑”。这种谬误出现在论证中，当一个人不是通过提供合理的论据或证据来支持其观点，而是通过威胁或使用暴力、强制手段来迫使他人接受其观点或立场时。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-section&#34;&gt;### 特点：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**非理性**&lt;/span&gt;：诉诸暴力忽略了理性讨论和证据的重要性。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**强制**&lt;/span&gt;：它依赖于强制或威胁，而不是逻辑或证据。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**滥用权力**&lt;/span&gt;：通常涉及到权力的滥用，以压制反对意见。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-section&#34;&gt;### 示例：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**政治领域**&lt;/span&gt;：一个政权可能通过压迫和恐吓来维持其权力，而不是通过民主程序或公民的同意。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**个人争论**&lt;/span&gt;：在争论中，一个人可能会说：“如果你不按照我说的做，你就会受到伤害。”这是一种通过威胁来迫使对方屈服的行为。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-section&#34;&gt;### 为什么这是一种谬误：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**忽视论证**&lt;/span&gt;：它不提供任何支持观点的实质性论证。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**道德问题**&lt;/span&gt;：使用暴力或威胁是不道德的，因为它侵犯了他人的自由和权利。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**不可持续**&lt;/span&gt;：基于恐惧的论证可能暂时有效，但不会建立长期的理解和接受。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-section&#34;&gt;### 如何反驳诉诸暴力的论证：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**指出谬误**&lt;/span&gt;：明确指出对方使用了诉诸暴力的逻辑谬误。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**要求证据**&lt;/span&gt;：要求对方提供支持其观点的合理论据或证据。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**强调理性讨论**&lt;/span&gt;：提倡通过理性讨论和开放的对话来解决分歧。&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**揭露后果**&lt;/span&gt;：指出诉诸暴力的长期后果，如不信任、反抗和关系破裂。&lt;br&gt;&lt;br&gt;诉诸暴力是一种在逻辑和道德上都受到质疑的论证方式，它破坏了建设性和理性的对话环境。在任何寻求真理和公正的讨论中，都应该避免使用或接受这种论证方式。&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;诉诸怜悯&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight applescript&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs applescript&#34;&gt;诉诸怜悯（Appeal &lt;span class=&#34;hljs-keyword&#34;&gt;to&lt;/span&gt; Pity）是一种逻辑谬误，它通过激发听众的同情心来替代有效的论证。这种谬误通常发生在人们试图说服他人时，他们不是通过提供有力的论据或证据，而是试图唤起听众的怜悯或同情心。&lt;br&gt;&lt;br&gt;例如，在法庭上，如果律师没有足够的证据来证明其客户的清白，他们可能会尝试让陪审团对客户产生同情。律师可能会说：“我的客户已经经历了很多。他有年幼的孩子需要照顾，如果他被判有罪，他的家庭将会受到毁灭性的打击。” 这里，律师并没有讨论法律或案件的事实，而是在试图操纵陪审团的情感。&lt;br&gt;&lt;br&gt;诉诸怜悯的谬误在逻辑上是无效的，因为它忽略了决策应该基于事实和理性的原则。诉诸怜悯可能会在某些情况下被合理使用，比如在讨论与人类苦难直接相关的议题时，情感可能会在理解他人观点时发挥合理作用。然而，当它被用作支持论点的唯一手段，尤其是在需要逻辑和证据的情况下，它就成为了一种谬误。&lt;br&gt;&lt;br&gt;为了避免诉诸怜悯的谬误，我们应该专注于提供有力的证据和逻辑论证来支持我们的观点。我们应该认识到，虽然诉诸怜悯可能会在某些情况下产生影响，但决策过程应该基于事实和理由，而不是情感操纵。&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;稻草人谬误 (被对方扭曲我方的话)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&#34;highlight markdown&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;47&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs markdown&#34;&gt;当你发现对方在辩论中使用了稻草人谬误时，你可以采取以下步骤来反驳：&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;1.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**明确指出谬误**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 直接指出对方歪曲了你的论点，并正在攻击一个不存在的立场。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;2.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**重申你的原始论点**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 清楚地重新陈述你的原始论点，以便听众可以了解你的真实立场。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;3.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**展示差异**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 指出对方所攻击的论点与你的实际论点之间的差异。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;4.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**提供证据**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 提供证据或引用你之前的言论，以证明对方的指控是歪曲的。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;5.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**请求澄清**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 要求对方澄清他们是如何得出他们所攻击的结论的。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;6.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**引导对方关注实际论点**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 邀请对方回到你的原始论点，并就这个论点进行讨论。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;7.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免反击**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 不要陷入对方的陷阱，不要对他们的稻草人进行反击，这样只会让辩论偏离主题。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;8.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**保持冷静**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 保持冷静和专业，不要让情绪影响你的回应。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;9.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**请求第三方评估**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;   -&lt;/span&gt; 如果可能，请求中立的第三方评估哪一方的论点被歪曲了。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;10.&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**使用逻辑和理性**&lt;/span&gt;：&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;    -&lt;/span&gt; 用逻辑和理性来反驳对方的论点，而不是诉诸情感。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-section&#34;&gt;### 示例反驳：&lt;/span&gt;&lt;br&gt;假设对方错误地声称你主张“禁止所有的枪支”，而你实际上主张的是“对枪支购买进行更严格的背景调查”。&lt;br&gt;&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**指出谬误**&lt;/span&gt;：“你似乎误解了我的立场。我从未主张禁止所有枪支。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**重申论点**&lt;/span&gt;：“我的观点是，我们应该实施更严格的背景调查，以确保枪支不会落入不负责任的人手中。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**展示差异**&lt;/span&gt;：“我提倡的是安全措施，而不是全面的禁令。这两者之间有很大的区别。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**提供证据**&lt;/span&gt;：“正如我在之前的讨论中提到的，我的立场是基于……的研究和数据。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**请求澄清**&lt;/span&gt;：“你能解释一下，你是如何得出我主张禁止所有枪支的结论的吗？”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**引导关注实际论点**&lt;/span&gt;：“让我们回到讨论的真正议题上，即如何通过背景调查来减少枪支暴力。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**避免反击**&lt;/span&gt;：“我不会对你歪曲的论点进行反击，但我坚持我的原始论点。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**保持冷静**&lt;/span&gt;：“让我们以冷静和理性的态度来讨论这个问题。”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**请求第三方评估**&lt;/span&gt;：“在场的各位，你们认为我主张的是全面禁止枪支吗？”&lt;br&gt;&lt;span class=&#34;hljs-bullet&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;hljs-strong&#34;&gt;**使用逻辑和理性**&lt;/span&gt;：“研究表明，实施背景调查可以有效地减少枪支暴力事件。”&lt;br&gt;&lt;br&gt;通过这种方式，你可以有效地反驳对方的稻草人谬误，并引导辩论回到一个更加合理和建设性的方向。&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;什么是辩论&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#什么是辩论&#34;&gt;#&lt;/a&gt; 什么是辩论&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;辩论中说服第三方的重要性，而不是试图直接说服对方辩友。&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;辩论与讨论和请求的区别&lt;/strong&gt;：讨论和谈判的权利在双方，而辩论的权利在第三方。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;辩论的权力分割&lt;/strong&gt;：在讨论中，双方共同决定讨论的方向和内容。在谈判中，请求方需要说服对方，权力在被请求方。而在辩论中，权力在于第三方，即评委或观众。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;面向对方辩友的错误&lt;/strong&gt;：许多辩手错误地面向对方辩友进行辩论，试图说服对方。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;对方辩友不可能被说服&lt;/strong&gt;：因为如果对方辩友被说服，就意味着他们输了辩论。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;辩论的策略&lt;/strong&gt;：辩手应该更多地考虑如何说服第三方，即评委或观众，而不是对方辩友。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;辩论的目的是影响评委&lt;/strong&gt;：辩手应该将自己置于评委的角度，考虑如何通过逻辑和证据来说服评委。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;辩论与真理的关系&lt;/strong&gt;：辩论的目的不是寻求真理，而是让人相信你找到了真理。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;辅助轮&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#辅助轮&#34;&gt;#&lt;/a&gt; 辅助轮&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.bilibili.com/video/BV15N411a7FN/&#34;&gt;方便的四辩稿模板&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+        <category term="辩论" />
+        <updated>2024-10-05T16:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <id>https://ablingss.github.io/2024/10/05/2024-10-05-helloworld/</id>
+        <title>欢迎你！</title>
+        <link rel="alternate" href="https://ablingss.github.io/2024/10/05/2024-10-05-helloworld/"/>
+        <content type="html">&lt;h1 id=&#34;欢迎你来到我的博客&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#欢迎你来到我的博客&#34;&gt;#&lt;/a&gt; 欢迎你来到我的博客&lt;/h1&gt;
+&lt;p&gt;我是 ABLing&lt;br&gt;
+ 来自 UESTC&lt;br&gt;
+ 我会在博客记录一些想法和吐槽&lt;br&gt;
+欢迎你联系我，与我一起拓宽技术栈&lt;/p&gt;
+</content>
+        <category term="随便聊聊" />
+        <updated>2024-10-04T16:00:00.000Z</updated>
+    </entry>
+</feed>
