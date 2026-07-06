@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+    <channel>
+        <title>ABLingss • Posts by &#34;随笔&#34; tag</title>
+        <link>https://ablingss.github.io</link>
+        <description>技术博客。记录编译器、机器学习系统、计算机视觉与大模型工程实践。</description>
+        <language>zh-CN</language>
+        <pubDate>Tue, 07 Apr 2026 00:00:00 +0800</pubDate>
+        <lastBuildDate>Tue, 07 Apr 2026 00:00:00 +0800</lastBuildDate>
+        <category>辩论</category>
+        <category>随便聊聊</category>
+        <category>创作</category>
+        <category>演讲</category>
+        <category>随笔</category>
+        <category>小说</category>
+        <category>音乐生成</category>
+        <category>AIGC</category>
+        <category>LLM</category>
+        <category>Diffusion</category>
+        <category>Review</category>
+        <item>
+            <guid isPermalink="true">https://ablingss.github.io/2026/04/07/2026-04-07-04070222/</guid>
+            <title>04070222</title>
+            <link>https://ablingss.github.io/2026/04/07/2026-04-07-04070222/</link>
+            <category>创作</category>
+            <category>随笔</category>
+            <pubDate>Tue, 07 Apr 2026 00:00:00 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;2:22。&lt;/p&gt;
+&lt;p&gt;在 GitHub 上搜了几个关键词： &lt;code&gt;QQ-History-Backup&lt;/code&gt; ， &lt;code&gt;Export-Chat-Logs&lt;/code&gt; 。网页上的 Star 数并不高，说明这只是极少数人才会有的需求。熟练地  &lt;code&gt;git clone&lt;/code&gt; ，配置环境，然后在终端里输入命令。&lt;/p&gt;
+&lt;p&gt;屏幕上开始跳动绿色的进度条，一行行解析出的数据在飞速滚动。&lt;/p&gt;
+&lt;p&gt;手机屏幕亮了。微信群里有人发了截图，是 ACL 的录用通知。几个认识的朋友中稿了，大家在群里刷着 &amp;quot;牛逼&amp;quot; 和红包。盯着那个绿色的录用邮件截图看了几秒钟，然后机械地回复了一个点赞的表情包。&lt;/p&gt;
+&lt;p&gt;这种感觉很荒谬。&lt;/p&gt;
+&lt;p&gt;还站在东疆港的海边，听她食熊则肥，食蛙则瘦的盛夏，讲那个无疾而终的故事，其实不过是几小时前的事情。而现在，我坐在这儿，一边试图用技术手段去打捞自己几年前的碎语，一边被同龄人的学术成就精准地刺痛。&lt;/p&gt;
+&lt;p&gt;还没来得及消化海风带来的寒意，就被现实的进度条推到了死角。&lt;/p&gt;
+&lt;p&gt;明天下午四点是组会。&lt;/p&gt;
+&lt;p&gt;看了看还没怎么动过的 PPT 模板，又看了看正在解析中的聊天记录。终端窗口里跳出了一个报错： &lt;code&gt;Error: Database is encrypted&lt;/code&gt; 。&lt;/p&gt;
+&lt;p&gt;没有去修那个 Bug，而是把电脑合上了。&lt;/p&gt;
+&lt;p&gt;9 平米的、即使如此也即将失去的宿舍里陷入了彻底的黑暗，舍友早已睡去。并不是因为某种巨大的悲剧，而是一种由于睡眠不足、自我怀疑和对未来的恐慌交织在一起的、具体的窒息感。&lt;/p&gt;
+&lt;p&gt;生活没打算给我一个缓冲期。&lt;/p&gt;
+&lt;p&gt;躺在床上，闭上眼，脑子里不是海，也不是那个女孩。&lt;br&gt;
+是 ACL 的录用邮件，是组会要用的图表，是那个没跑通的 Python 脚本。&lt;/p&gt;
+&lt;p&gt;睡不着，但这和浪漫一点关系都没有。&lt;/p&gt;
+ ]]></description>
+        </item>
+        <item>
+            <guid isPermalink="true">https://ablingss.github.io/2026/04/07/2026-04-07-%E5%A6%82%E6%9E%9C%E4%BB%8A%E5%A4%A9%E5%B1%9E%E4%BA%8E%E6%88%91%E4%BB%AC/</guid>
+            <title>如果今天属于我们</title>
+            <link>https://ablingss.github.io/2026/04/07/2026-04-07-%E5%A6%82%E6%9E%9C%E4%BB%8A%E5%A4%A9%E5%B1%9E%E4%BA%8E%E6%88%91%E4%BB%AC/</link>
+            <category>创作</category>
+            <category>随笔</category>
+            <pubDate>Tue, 07 Apr 2026 00:00:00 +0800</pubDate>
+            <description><![CDATA[ &lt;p&gt;&lt;img src=&#34;/img/posts/tianjin-dongjiang.jpg&#34; alt=&#34;&#34;&gt;&lt;br&gt;
+&lt;em&gt;天津・东疆港 海风很大&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;去东疆港那段路正好二十公里。天津夜里的温度偏低。&lt;/p&gt;
+&lt;p&gt;车停在防波堤旁边。海面上什么都看不见，只能听到水面撞在水泥地上的声音。旁边的人说了很久的话。高中那个男生，花店包得不太好看的兰花，晚自习，他的笑以及没有回音的消息。&lt;/p&gt;
+&lt;p&gt;在旁边听着，没怎么出声。这大概是解决这些陈芝麻烂谷子的常见流程，说出来，然后假装它随着这趟长途车被扔在了海里。&lt;/p&gt;
+&lt;p&gt;凌晨五点，按计划返回。除了被风吹出点感冒前兆的鼻音，似乎谁都挺好的。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/posts/spring.jpg&#34; alt=&#34;&#34;&gt;&lt;br&gt;
+&lt;em&gt;春天&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;旅途总需要消解点什么。&lt;/p&gt;
+&lt;p&gt;回到房间时，实在太安静，或者天津海风后遗症的缘故，他坐在床沿解开了手机。网络连上来，屏幕挂在通讯软件的一个对话框上。这名字很久没跳动过了。&lt;/p&gt;
+&lt;p&gt;他漫无目的地往上滑，一下、两下。因为网速不快，一直转着圈。&lt;br&gt;
+突然跳出年份很久的开头。&lt;/p&gt;
+&lt;p&gt;密集的日常像不用排版的传单，两个人说了一下午的废话，连天晴也要专门用惊叹号来结尾。&lt;/p&gt;
+&lt;p&gt;窗外隐约有环卫工人扫街的动静。屋里有点暗。&lt;/p&gt;
+&lt;p&gt;他看了大约十几分钟。然后拇指停在半空很久，到底也没有把后面的内容看完。&lt;/p&gt;
+&lt;p&gt;空调调高了两度。天津太冷了，而高中的事情太久远了，就当今晚从没连过那个 Wi-Fi 就好。&lt;/p&gt;
+ ]]></description>
+        </item>
+    </channel>
+</rss>
