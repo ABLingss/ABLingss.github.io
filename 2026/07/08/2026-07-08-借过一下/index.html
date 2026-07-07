@@ -1,0 +1,861 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#1a2332">
+  <meta name="author" content="ABLingss">
+  <meta name="keywords" content="Compiler,MLSys,Computer Vision,LLM,AI Infrastructure">
+  
+    <meta name="description" content="我对「喜欢」这件事有一个怀疑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="借过一下">
+<meta property="og:url" content="https://ablingss.github.io/2026/07/08/2026-07-08-%E5%80%9F%E8%BF%87%E4%B8%80%E4%B8%8B/index.html">
+<meta property="og:site_name" content="ABLingss">
+<meta property="og:description" content="我对「喜欢」这件事有一个怀疑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ablingss.github.io/img/posts/jieguoyixia.jpg">
+<meta property="article:published_time" content="2026-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-07T18:49:14.288Z">
+<meta property="article:author" content="ABLingss">
+<meta property="article:tag" content="创作">
+<meta property="article:tag" content="随笔">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ablingss.github.io/img/posts/jieguoyixia.jpg">
+  
+  
+  
+  <title>借过一下 - ABLingss</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"ablingss.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ABLingss</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banner-home.svg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="借过一下"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-08 00:00" pubdate>
+          2026年7月8日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">借过一下</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="第一章"><a class="markdownIt-Anchor" href="#第一章">#</a> 第一章</h2>
+<p><img src="/img/posts/jieguoyixia.jpg" srcset="/img/loading.gif" lazyload alt=""></p>
+<p>我对「喜欢」这件事有一个怀疑。</p>
+<p>这一年多来，我反复问过自己到底喜不喜欢她。但后来发现这个问题本身就是谎言 —— 因为我根本没有在「喜欢」她，我只是在「习惯」她。习惯手机亮起来的时候是她，习惯听她聊她的事、她的人、她的前男友们，习惯坐在对面点头微笑扮演一个情绪稳定的成年人。习惯是一种很可怕的东西，因为它长得像喜欢，但它不是。喜欢会痛，习惯只会钝。我早就变钝了。</p>
+<p>有一段很流行的说法，说爱一个人就是即便被拒绝也愿意默默守候。这句话害了很多人，我也是其中之一。被拒绝之后继续联系，在流行文化里被包装成深情，包装成执着，包装成总有一天对方会看见你的好。但事实上，它既不是深情也不是执着，它只是懦弱 —— 不敢离开，不敢承认自己不被选择，不敢面对那个空出来的周末下午。所谓守护，不过是给自己的懦弱取了一个好听的名字。</p>
+<p>有一种错觉叫做「只要我还在她身边，就还有机会」。但机会的前提是可能性，而被拒绝的那一刻，可能性已经归零了。归零之后的一切努力都不叫努力，叫死循环。我分析过自己为什么放不下，写过三千字的文档，画过决策树，做过最优策略推导，像一个正在 debug 的程序员一样认真。最后的结论是：我不想放下的原因，是因为承认放下就等于承认这一年多毫无意义。人很难承认自己在一件没有结果的事情上花了这么多时间。于是继续投入，继续等。</p>
+<p>五一那天，我没有回她的消息。</p>
+<p>开始觉得那些歌颂暗恋、赞美等待的青春故事，都是骗人的。</p>
+<p>暗恋，或者说，作为朋友在她身边。根本不美好，它只是把你的精力、时间、自尊心一点一点地磨掉，然后你在某天深夜发现自己什么都没有剩下，连一句抱怨都说不出口，因为你连「被伤害」的资格都没有 —— 毕竟，她又没有做错什么。只是不喜欢我而已。</p>
+<p>不喜欢一个人不是罪。</p>
+<p>一直等一个不喜欢自己的人回头，才是对自己最大的犯罪。</p>
+<h2 id="第二章"><a class="markdownIt-Anchor" href="#第二章">#</a> 第二章</h2>
+<p>古希腊哲学家巴门尼德提出过一个关于世界最深刻的对立：轻与重。重是残酷的，轻是美丽的。但这真的是事实吗？</p>
+<p>沉重的负担压迫着我们，让我们屈服，把我们钉在地上。但在历史的每一个瞬间，如果某种痛苦只发生一次，不复回归，它就会变得比鸿毛还轻，甚至无法在记忆中留下痕迹。它像十四世纪非洲部落之间的一场战争，哪怕有十万人在残酷的磨难中灭绝，由于它不复回归，在历史学家笔下也只剩下一行无关痛痒的文字。</p>
+<p>然而，如果一个没有结果的拥抱、一次被温和拒绝的告白，要在每个假期、在每一个熟悉的城市里无休无止地重演，它会变成什么？</p>
+<p>它将变成一个永远隆起的硬块，沉重地压在生命的关节上。</p>
+<p>2025 年 2 月，我向她表白，被拒绝了。拒绝得极其温和，甚至称得上宽恕。在正常的物理法则里，一个被拒绝的事件应当迅速坠落，归于虚空，变得比鸿毛还轻。</p>
+<p>我们谁都没有允许这个事件死去。</p>
+<p>我们保持着一个悬停的、不产生任何碰撞的距离。直到清明假期前，她随口问我愿不愿意陪她去大同。我像一个被触发了预设程序的机器人，立刻调整工作、协调时间。然而临近出发，她又轻飘飘地丢下一句：「我想了想，还是跟室友去得了。」</p>
+<p>我精心调整出来的日程和满腔的期待，在她眼里不过是一张随时可以作废的草稿。我感到了被浪费的委屈，却连生气的立场都没有。</p>
+<p>可我还是在夜深时对着朋友承认：我还是念念不忘。</p>
+<p>这种状态，在人类学里被称为「阈限」。踩在门槛上，既不属于室内的温暖，也不属于室外的寒冷。因为没有结果，每一次见面都不产生任何道德上的后果，它是如此之轻；但又因为每一次见面都在脑海里一帧一帧地复盘、在深夜里去确认，它又变得如此之重。</p>
+<p>去年十月，我谈过一场短暂的恋爱。我们在网上认识，一起喝过酒，但一个月后就平淡收场，我甚至没有留下她的一张照片。我发现自己的灵魂早就被钉死在那个门槛上了。先前写下的那篇数千字、画满决策树和概率公式的理性文档，就是试图用逻辑去消解这种痛苦的产物。在白板上，我写下了最完美的止损公式。</p>
+<p>但这恰恰是最大的自欺。</p>
+<p>在这个世界里，理性的分析是我用来粉饰懦弱的工具。当她的消息在手机屏幕上亮起，我的手指依然会本能地屈服。理性的程序在内存里疯狂报错，而身体却温顺地走向她，听她用平淡的语气聊起那些与我无关的前男友们。</p>
+<p>踩在门槛上的人，往往以为自己在等待一扇大门打开，或者等自己彻底死心。但那个空着的对话框让我突然明白：</p>
+<p>门其实根本没锁。</p>
+<p>没有人把我囚禁在半空中。</p>
+<p>是我自己，为了逃避落地的震荡，主动取消了重力。</p>
+<h2 id="第三章"><a class="markdownIt-Anchor" href="#第三章">#</a> 第三章</h2>
+<p>然而，主动取消了重力的人，最怕地面传来的轻微震动。</p>
+<p>我们很久没有说过话了。久到我以为自己已经在那条名为「朋友」的门槛上站稳了，久到我以为那些关于「放下」的豪言壮语已经成了真。</p>
+<p>然后，震动发生了。手机亮了。</p>
+<p>没有铺垫，没有寒暄，她发来一句：「我想去港迪，你能不能陪我一起去。」</p>
+<p>那一瞬间，我听到了自己身体里那些刚刚搭建好的、用来防御和自省的逻辑架构，在几秒钟之内分崩离析的声音。什么巴门尼德，什么轻与重，什么最优策略推导 —— 在「港迪」这两个字面前，全部变成了一堆毫无用处的废纸。</p>
+<p>我发现自己依然想去。</p>
+<p>这种渴望让我感到一种近乎羞耻的挫败。我用三千字去分析自己的懦弱，用一整张白板去演算止损公式，我以为自己终于进化成了一个理性的、能够掌控情绪的成年人。可原来我根本没有，我还是那个只要她勾勾手指，就会本能地想要交出时间和尊严的懦弱鬼。</p>
+<p>在聊天框里，我们有一搭没一搭地聊着时间。<br>
+17 号，18 号，或者 26 号。<br>
+去，还是不去？</p>
+<p>看着屏幕上她发来的那些可爱的表情包，和那句随性的「要是那段时间没事那没问题」，我突然看清了这趟旅行的底色。我想起了清明节的大同，想起了那种被随手搁置的、被浪费的温热。</p>
+<p>迪士尼是这个世界上最擅长制造幻觉的地方。那是一座没有重力的城堡，烟花、城堡、粉红色的玩偶，所有的一切都在暗示你：这里可以容纳一切美好的结局。如果我去，我将获得整整两天毫无杂质的快乐。我们可以像真正的恋人一样在人群中穿梭，在花车巡游时并肩欢呼，在夜空下分享同一个瞬间。</p>
+<p>但这恰恰是最高明的刑罚。</p>
+<p>因为狂欢总会结束。当 18 号的深夜我们坐上回程的航班，当城市的霓虹灯再次穿透机舱的舷窗，重力会以十倍的重量重新压下来。她会回到她的生活里，继续用平淡的语气聊起那些与我无关的人；而我，则要在一个更加空旷的周末下午，去面对一个比之前更加残破、更加无法直视的自己。</p>
+<p>对她来说，这只是一次「刚好有空、刚好有伴」的、轻飘飘的旅行。<br>
+但对我来说，这是一场要赌上我所有刚刚长好的血肉的、沉重的献祭。</p>
+<p>她发完最后几个表情包，说：「到时候等我时间安排出来以后联系你得了。」</p>
+<p>看着这句和清明节时如出一辙的、随时准备把我放鸽子的说辞，我看着那个对话框，手指在键盘上悬停了很久，最终没有再追问具体的日期。我没有说「好」，也没有说「不好」，我只是发了几个敷衍的表情包，然后把手机扣在了桌面上。</p>
+<p>「我不去了。」我对自己说。但我没发出来。</p>
+<p>窗外的天色渐渐暗了下去。白板上那些被擦掉的公式留下了一片模糊的蓝色笔迹。我坐在椅子上，没有开灯，任由自己在这个没有烟花、没有城堡、也根本不美好的房间里，重重地、慢慢地，落回地面。</p>
+<h2 id="借过一下"><a class="markdownIt-Anchor" href="#借过一下">#</a> 借过一下</h2>
+<p>「借过一下」，是我们在狭窄的通道里，最常对陌生人说起的一句话。</p>
+<p>它有一种奇妙的、礼貌的冷漠：它既承认了对方肉体的物理存在，又表达了自己急于越过对方、奔向另一个空间的决心。在这四个字响起的瞬间，两个原本平行的轨道发生了一次极其轻微的、不具伤害性的摩擦，然后迅速归于分离。</p>
+<p>在我和她的这一年多里，这句话本该更早被说出来的。</p>
+<p>其实，我一直扮演着一个不合时宜的挡路者。我站在她生命的门槛上，以为自己是在深情地守望，但对她而言，我可能只是一个占据了通道空间、让她在走向别处时不得不侧身避让的障碍物。她那温和的拒绝、随口改期的旅行、轻飘飘的试探，无一不是在用一种近乎无声的方式，对我的感情说：「借过一下。」</p>
+<p>我记得笛卡儿。在笛卡儿的理论里，动物是没有灵魂的，它们只是一些精密的、能活动的机器。当一只狗发出哀鸣，那并不是痛苦，而是一辆生锈的马车轮子在摩擦，只需要加一点润滑油。真正的痛苦是无法被消解的，它只能被接受。</p>
+<p>在梦里，我们终于站在了迪士尼的城堡前。烟花在夜空中升起，但那些烟花不是粉红色的，也不是金色的，而是白晃晃的、像灵堂里忘记关掉的长明灯一样的光。人群在四周欢呼，她手里牵着一个巨大的、没有五官的面包圈。</p>
+<p>她转过脸看着我，用一种极其空洞的、温和的目光。那目光里没有爱，也没有恨，只有一种不堪承受的信任。她对我说：「你看，我们这不是到了吗？」</p>
+<p>我顺着她的目光低下头，发现自己没有穿鞋，双脚深陷在城堡下方的沼泽里。而我的身体正在飞快地缩小，缩成了一个只有发条卡嗒作响的玩具，在水泥地面上东躲西藏，试图找到一个可以容纳自己的树洞。</p>
+<p>从梦中惊醒，浑身冷汗。窗外，暴雨终于落了下来，沉重地砸在空调外机上，发出金属般的敲击声。</p>
+<p>在这个不眠的深夜，我忽然意识到，我一直以来对她的「执着」，其实带有某种侵略性。</p>
+<hr>
+<p>我们总倾向于认为，等待的人是无辜的受害者，而被等待的人是手握强力的主宰。但事实恰恰相反。我用我的「深情」和「等待」，在无形中对她施加了一种道德上的重压。每一次被拒绝后的继续联系，每一次假装大度的「默默守护」，都是在强迫她去承担「不选择我」的负罪感。我的懦弱是具有攻击性的，它像一条细细的绳子，试图把她往我所期望的、名为「感动」的泥潭里拉。</p>
+<p>而现在，我决定剪断这根绳子。</p>
+<p>这不是因为我变强大了，恰恰相反，是因为我承认了自己的绝对软弱。我承认自己无法成为那个能在狂欢后独自承受重力坠落的超人，我承认我只是一个凡人，害怕周末下午的空虚，害怕在一件没有结果的事情上耗尽余生。</p>
+<p>雨渐渐小了。空气里弥漫着湿润的泥土和沥青的气味。</p>
+<p>没有去删除她的联系方式，也没有写下一篇长长的信去控诉或告别。这些举动都太重了，重得像是还要在她的生活里砸出一个坑洼。我只是把手机正面朝下，扣在了桌面上。</p>
+<p>房间里很安静，只有桌上的台灯亮着。一只迷失了方向的小蛾子在灯罩旁飞舞，它的翅膀扑扑作响，干瘪而急促，仿佛是在对这束虚假的光线做着最后的、无意义的致敬。</p>
+<p>看着那只蛾子，心中感受到了一种奇异的平静。这种平静里浸透了悲凉。悲凉是形式，平静是内容。当这两者融合在一起时，生命便不再是一条指向未知的、令人战栗的直线，而是在已知的事物中，缓缓落回了它原本的、单调而安全的轨道。</p>
+<p>承认这一年多毫无意义，承认自己不被选择，承认我们只是彼此生命中的过客 —— 这不再是一件让人感到羞耻的事。</p>
+<p>「借过一下。」我看着窗外逐渐发白的天空，在心里对那个曾经在门槛上站了很久的自己说。</p>
+<p>然后，我侧过身，让他走了过去。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%94%9F%E6%B4%BB/" class="category-chain-item">生活</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%88%9B%E4%BD%9C/" class="print-no-link">#创作</a>
+      
+        <a href="/tags/%E9%9A%8F%E7%AC%94/" class="print-no-link">#随笔</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>借过一下</div>
+      <div>https://ablingss.github.io/2026/07/08/2026-07-08-借过一下/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ABLingss</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/04/13/2026-04-13-musicgen-routes-review/" title="MusicGen 技术路线回顾：YuE、DiffRhythm、ACE-Step 1.5、LeVo 与 Muse">
+                        <span class="hidden-mobile">MusicGen 技术路线回顾：YuE、DiffRhythm、ACE-Step 1.5、LeVo 与 Muse</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://ablingss.github.io" target="_blank" rel="nofollow noopener"><span>Home</span></a> <span>&nbsp;|&nbsp;</span> <a href="https://github.com/ABLingss" target="_blank" rel="nofollow noopener"><span>GitHub</span></a> <i class="iconfont icon-love"></i> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
