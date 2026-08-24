@@ -1,0 +1,1009 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#1a2332">
+  <meta name="author" content="ABLingss">
+  <meta name="keywords" content="Compiler,MLSys,Computer Vision,LLM,AI Infrastructure">
+  
+    <meta name="description" content="集中展示当前博客支持的 Markdown、HTML、数学公式、代码、媒体与扩展语法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Markdown &#x2F; Hexo 全格式测试">
+<meta property="og:url" content="https://ablingss.github.io/2020/01/01/2020-01-01-markdown-hexo-format-test/index.html">
+<meta property="og:site_name" content="ABLingss">
+<meta property="og:description" content="集中展示当前博客支持的 Markdown、HTML、数学公式、代码、媒体与扩展语法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ablingss.github.io/img/posts/spring.jpg">
+<meta property="og:image" content="https://ablingss.github.io/img/posts/jieguoyixia.jpg">
+<meta property="article:published_time" content="2019-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-24T15:50:51.586Z">
+<meta property="article:author" content="ABLingss">
+<meta property="article:tag" content="Markdown">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="测试">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ablingss.github.io/img/posts/spring.jpg">
+  
+  
+  
+  <title>Markdown / Hexo 全格式测试 - ABLingss</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/local-music.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"ablingss.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ABLingss</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banner-home.svg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="用于后续主题与文章样式迭代的基准页面"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-01-01 00:00" pubdate>
+          2020年1月1日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">用于后续主题与文章样式迭代的基准页面</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="markdown-hexo-全格式测试"><a class="markdownIt-Anchor" href="#markdown-hexo-全格式测试">#</a> Markdown / Hexo 全格式测试</h1>
+<blockquote>
+<p>这是一篇专门用于检查文章渲染效果的基准文章。后续调整主题、字体、间距、代码样式或移动端布局时，可以优先查看这一页。</p>
+</blockquote>
+<h2 id="目录"><a class="markdownIt-Anchor" href="#目录">#</a> 目录</h2>
+<ul>
+<li><a href="#%E5%9F%BA%E7%A1%80%E6%96%87%E6%9C%AC">基础文本</a></li>
+<li><a href="#%E6%A0%87%E9%A2%98%E4%B8%8E%E5%88%86%E9%9A%94%E7%BA%BF">标题与分隔线</a></li>
+<li><a href="#%E5%88%97%E8%A1%A8%E4%B8%8E%E4%BB%BB%E5%8A%A1%E6%B8%85%E5%8D%95">列表与任务清单</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E4%B8%8E%E6%8F%90%E7%A4%BA">引用与提示</a></li>
+<li><a href="#%E9%93%BE%E6%8E%A5%E5%9B%BE%E7%89%87%E4%B8%8E%E5%AA%92%E4%BD%93">链接、图片与媒体</a></li>
+<li><a href="#%E8%A1%A8%E6%A0%BC">表格</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+<li><a href="#latex-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F">LaTeX 数学公式</a></li>
+<li><a href="#html-%E4%B8%8E%E8%AF%A6%E6%83%85%E6%8A%98%E5%8F%A0">HTML 与详情折叠</a></li>
+<li><a href="#%E6%89%A9%E5%B1%95%E8%AF%AD%E6%B3%95">扩展语法</a></li>
+</ul>
+<hr>
+<h2 id="基础文本"><a class="markdownIt-Anchor" href="#基础文本">#</a> 基础文本</h2>
+<p>这是一个普通段落，用来检查正文的行高、字距、段落间距和中文标点显示效果。当前文章使用中文，也故意保留了一段 English text，方便观察中英文混排。</p>
+<p>这是第二行。<br>
+这是通过 Markdown 行尾两个空格产生的换行。</p>
+<p>下面是常见的行内样式：<strong>粗体</strong>、<em>斜体</em>、<em><strong>粗斜体</strong></em>、<s>删除线</s>、<mark>高亮</mark>、<ins>插入内容</ins>、 <code>inline code</code> 、H<sub>2</sub>O、x<sup>2</sup>。</p>
+<p>转义字符也应该保留原样：* 不是斜体 *，`不是代码`，# 不是标题。</p>
+<p>定义一个缩写：*[HTML]: HyperText Markup Language。HTML 是这里定义过的缩写，把鼠标移动到 HTML 上可以检查缩写提示。</p>
+<h2 id="标题与分隔线"><a class="markdownIt-Anchor" href="#标题与分隔线">#</a> 标题与分隔线</h2>
+<h3 id="三级标题"><a class="markdownIt-Anchor" href="#三级标题">#</a> 三级标题</h3>
+<h4 id="四级标题"><a class="markdownIt-Anchor" href="#四级标题">#</a> 四级标题</h4>
+<h5 id="五级标题"><a class="markdownIt-Anchor" href="#五级标题">#</a> 五级标题</h5>
+<h6 id="六级标题"><a class="markdownIt-Anchor" href="#六级标题">#</a> 六级标题</h6>
+<p>标题层级从一级到六级都在这篇文章中出现。下面再放一条分隔线：</p>
+<hr>
+<h2 id="列表与任务清单"><a class="markdownIt-Anchor" href="#列表与任务清单">#</a> 列表与任务清单</h2>
+<h3 id="无序列表"><a class="markdownIt-Anchor" href="#无序列表">#</a> 无序列表</h3>
+<ul>
+<li>第一项</li>
+<li>第二项
+<ul>
+<li>二级项目 A</li>
+<li>二级项目 B
+<ul>
+<li>三级项目</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第三项，包含  <code>inline code</code></li>
+</ul>
+<h3 id="有序列表"><a class="markdownIt-Anchor" href="#有序列表">#</a> 有序列表</h3>
+<ol>
+<li>第一步：读取文章</li>
+<li>第二步：渲染 Markdown
+<ol>
+<li>解析块级元素</li>
+<li>解析行内元素</li>
+</ol>
+</li>
+<li>第三步：检查最终页面</li>
+</ol>
+<h3 id="任务清单"><a class="markdownIt-Anchor" href="#任务清单">#</a> 任务清单</h3>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" id="cbx_0" checked="true" disabled="true"><label for="cbx_0"> 标题、段落和强调样式</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_1" checked="true" disabled="true"><label for="cbx_1"> 列表、引用和表格</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_2" checked="true" disabled="true"><label for="cbx_2"> 代码块与数学公式</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_3" checked="true" disabled="true"><label for="cbx_3"> 本地音乐播放器</label></li>
+<li class="task-list-item"><input type="checkbox" id="cbx_4" disabled="true"><label for="cbx_4"> 未来继续补充新的主题组件</label></li>
+</ul>
+<h2 id="引用与提示"><a class="markdownIt-Anchor" href="#引用与提示">#</a> 引用与提示</h2>
+<blockquote>
+<p>这是一级引用。</p>
+<p>引用可以包含多个段落，也可以包含 <strong>粗体</strong>、<em>斜体</em> 和  <code>代码</code> 。</p>
+<blockquote>
+<p>这是嵌套引用。</p>
+<p>嵌套引用结束。</p>
+</blockquote>
+</blockquote>
+<p>引用也可以搭配列表：</p>
+<blockquote>
+<p>本次检查重点：</p>
+<ul>
+<li>文字颜色是否清晰</li>
+<li>暗色模式是否可读</li>
+<li>移动端是否溢出</li>
+</ul>
+</blockquote>
+<h2 id="链接-图片与媒体"><a class="markdownIt-Anchor" href="#链接-图片与媒体">#</a> 链接、图片与媒体</h2>
+<h3 id="链接"><a class="markdownIt-Anchor" href="#链接">#</a> 链接</h3>
+<ul>
+<li>普通链接：<a target="_blank" rel="noopener" href="https://hexo.io/docs/">Hexo 官方文档</a></li>
+<li>自动链接：<a target="_blank" rel="noopener" href="https://hexo.io/">https://hexo.io/</a></li>
+<li>邮箱链接：<a href="mailto:hello@example.com">hello@example.com</a></li>
+<li>带标题的链接：<a target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/" title="Fluid Theme">Fluid 主题</a></li>
+</ul>
+<h3 id="图片"><a class="markdownIt-Anchor" href="#图片">#</a> 图片</h3>
+<p>下面使用仓库中已有的本地图片，检查图片圆角、宽度、懒加载和图注效果。</p>
+<p><img src="/img/posts/spring.jpg" srcset="/img/loading.gif" lazyload alt="春天" title="本地图片测试"></p>
+<p><em>本地图片图注：春天。</em></p>
+<p>也可以直接使用 HTML 图片并指定尺寸：</p>
+<img src="/img/posts/jieguoyixia.jpg" srcset="/img/loading.gif" lazyload alt="本地图片 HTML 测试" width="72%">
+<h3 id="本地音乐"><a class="markdownIt-Anchor" href="#本地音乐">#</a> 本地音乐</h3>
+<p>下面使用  <code>source/music/</code>  中的本地 MP3，检查播放器在亮色模式、暗色模式和移动端的表现。</p>
+<figure class="local-music-player">
+  <figcaption class="local-music-player__header">
+    <span class="local-music-player__title">スカーレット</span>
+    <span class="local-music-player__label">本地音乐</span>
+  </figcaption>
+  <audio controls preload="metadata" src="/music/上松範康(Elements Garden) - スカーレット.mp3">
+    您的浏览器不支持 HTML5 音频播放。
+  </audio>
+</figure>
+<p>播放器只读取站点自身  <code>/music/</code>  路径下的文件，不依赖外部音乐服务。</p>
+<h2 id="表格"><a class="markdownIt-Anchor" href="#表格">#</a> 表格</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">语法</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:right">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>#</code></td>
+<td style="text-align:center">一级标题</td>
+<td style="text-align:right">页面结构</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>**text**</code></td>
+<td style="text-align:center"><strong>粗体</strong></td>
+<td style="text-align:right">强调重点</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>`code`</code></td>
+<td style="text-align:center"><code>code</code></td>
+<td style="text-align:right">行内代码</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>$x^2$</code></td>
+<td style="text-align:center"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>x</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">x^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">x</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span></td>
+<td style="text-align:right">数学公式</td>
+</tr>
+</tbody>
+</table>
+<p>表格单元格中也可以包含 <strong>强调</strong>、链接和  <code>代码</code> 。</p>
+<h2 id="代码"><a class="markdownIt-Anchor" href="#代码">#</a> 代码</h2>
+<h3 id="行内代码"><a class="markdownIt-Anchor" href="#行内代码">#</a> 行内代码</h3>
+<p>使用  <code>npm run build</code>  构建站点，使用  <code>git status</code>  查看改动。</p>
+<h3 id="javascript"><a class="markdownIt-Anchor" href="#javascript">#</a> JavaScript</h3>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> tracks = [<br>  &#123; <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Scarlet&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;/music/scarlet.mp3&#x27;</span> &#125;,<br>  &#123; <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Local Demo&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;/music/demo.ogg&#x27;</span> &#125;<br>];<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">playTrack</span>(<span class="hljs-params">track</span>) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Playing: <span class="hljs-subst">$&#123;track.title&#125;</span>`</span>);<br>  <span class="hljs-keyword">return</span> track.<span class="hljs-property">source</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="python"><a class="markdownIt-Anchor" href="#python">#</a> Python</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path<br><br>music_dir = Path(<span class="hljs-string">&quot;source/music&quot;</span>)<br>tracks = <span class="hljs-built_in">sorted</span>(music_dir.glob(<span class="hljs-string">&quot;*.mp3&quot;</span>))<br><br><span class="hljs-keyword">for</span> track <span class="hljs-keyword">in</span> tracks:<br>    <span class="hljs-built_in">print</span>(track.name)<br></code></pre></td></tr></table></figure>
+<h3 id="shell"><a class="markdownIt-Anchor" href="#shell">#</a> Shell</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm run clean<br>npm run build<br>git status --short<br></code></pre></td></tr></table></figure>
+<h3 id="代码块带文件名与行号语义"><a class="markdownIt-Anchor" href="#代码块带文件名与行号语义">#</a> 代码块带文件名与行号语义</h3>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-deletion">- remote: external-player</span><br><span class="hljs-addition">+ local: source/music/</span><br></code></pre></td></tr></table></figure>
+<h3 id="缩进代码块"><a class="markdownIt-Anchor" href="#缩进代码块">#</a> 缩进代码块</h3>
+<pre><code class="hljs">这是一段四个空格缩进的代码块。
+第二行保留缩进和换行。
+</code></pre>
+<h2 id="latex-数学公式"><a class="markdownIt-Anchor" href="#latex-数学公式">#</a> LaTeX 数学公式</h2>
+<p>行内公式：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo>=</mo><mi>m</mi><msup><mi>c</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">E = mc^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">E</span><span class="mrel">=</span><span class="mord mathit">m</span><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，以及 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>u</mi><msubsup><mi>m</mi><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></msubsup><mi>i</mi><mo>=</mo><mfrac><mrow><mi>n</mi><mo>(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">sum_{i=1}^{n} i = \frac{n(n+1)}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.01em;"></span><span class="strut bottom" style="height:1.355em;vertical-align:-0.345em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span><span class="mord mathit">u</span><span class="mord"><span class="mord mathit">m</span><span class="vlist"><span style="top:0.258664em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit">n</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord reset-textstyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.345em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathrm">2</span></span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.485em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit">n</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span></span></span></span>。</p>
+<p>块级公式：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtable><mtr><mtd><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mtd><mtd><mrow><mrow></mrow><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msqrt><mrow><mn>2</mn><mi>π</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow></msqrt></mrow></mfrac><mi>exp</mi><mrow><mo fence="true">(</mo><mo>−</mo><mfrac><mrow><mo>(</mo><mi>x</mi><mo>−</mo><mi>μ</mi><msup><mo>)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac><mo fence="true">)</mo></mrow></mrow></mtd></mtr><mtr><mtd><mrow><msub><mi mathvariant="normal">∇</mi><mi>θ</mi></msub><mi>J</mi><mo>(</mo><mi>θ</mi><mo>)</mo></mrow></mtd><mtd><mrow><mrow></mrow><mo>=</mo><msub><mrow><mi mathvariant="double-struck">E</mi></mrow><mrow><mi>x</mi><mo>∼</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></msub><mrow><mo fence="true">[</mo><msub><mi mathvariant="normal">∇</mi><mi>θ</mi></msub><mi>log</mi><msub><mi>p</mi><mi>θ</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo><mo fence="true">]</mo></mrow></mrow></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{aligned}
+f(x) &amp;= \frac{1}{\sqrt{2\pi\sigma^2}}
+       \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) \\
+\nabla_\theta J(\theta) &amp;= \mathbb{E}_{x \sim p(x)}
+  \left[\nabla_\theta \log p_\theta(x)\right]
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:2.070569em;"></span><span class="strut bottom" style="height:3.641138em;vertical-align:-1.5705690000000003em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist"><span style="top:-0.5794609999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mclose">)</span></span></span><span style="top:1.2105690000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord"><span class="mord mathrm">∇</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.02778em;">θ</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="col-align-l"><span class="vlist"><span style="top:-0.5794609999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord displaystyle textstyle uncramped"></span><span class="mrel">=</span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.8450540000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord textstyle cramped"><span class="sqrt mord"><span class="sqrt-sign" style="top:-0.11505399999999999em;"><span class="style-wrap reset-textstyle textstyle uncramped">√</span></span><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathrm">2</span><span class="mord mathit" style="margin-right:0.03588em;">π</span><span class="mord"><span class="mord mathit" style="margin-right:0.03588em;">σ</span><span class="vlist"><span style="top:-0.289em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span><span style="top:-0.875054em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped sqrt-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord textstyle uncramped"><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="mop">exp</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord">−</span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord textstyle cramped"><span class="mord mathrm">2</span><span class="mord"><span class="mord mathit" style="margin-right:0.03588em;">σ</span><span class="vlist"><span style="top:-0.289em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathit">μ</span><span class="mclose"><span class="mclose">)</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span><span style="top:1.2105690000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord displaystyle textstyle uncramped"></span><span class="mrel">=</span><span class=""><span class="mord displaystyle textstyle uncramped"><span class="mord mathbb">E</span></span><span class="vlist"><span style="top:0.18019999999999992em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">x</span><span class="mrel">∼</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mclose">)</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">[</span><span class="mord"><span class="mord mathrm">∇</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.02778em;">θ</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.02778em;">θ</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mclose">)</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">]</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span></span></span></span></p>
+<p>矩阵、集合和极限也应该正常显示：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mo>=</mo><mrow><mo fence="true">[</mo><mtable><mtr><mtd><mrow><mn>1</mn></mrow></mtd><mtd><mrow><mn>2</mn></mrow></mtd></mtr><mtr><mtd><mrow><mn>3</mn></mrow></mtd><mtd><mrow><mn>4</mn></mrow></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo separator="true">,</mo><mspace width="2em"></mspace><msub><mi>lim</mi><mrow><mi>n</mi><mo>→</mo><mi mathvariant="normal">∞</mi></mrow></msub><msup><mrow><mo fence="true">(</mo><mn>1</mn><mo>+</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><mo fence="true">)</mo></mrow><mi>n</mi></msup><mo>=</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">A = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 4 \end{bmatrix},
+\qquad
+\lim_{n \to \infty}\left(1 + \frac{1}{n}\right)^n = e
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord mathit">A</span><span class="mrel">=</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist"><span style="top:-0.6099999999999999em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord mathrm">1</span></span></span><span style="top:0.5900000000000003em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist"><span style="top:-0.6099999999999999em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord mathrm">2</span></span></span><span style="top:0.5900000000000003em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord mathrm">4</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mpunct">,</span><span class="mord mspace qquad"></span><span class="mop op-limits"><span class="vlist"><span style="top:0.6em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">n</span><span class="mrel">→</span><span class="mord mathrm">∞</span></span></span></span><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="mop">lim</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="minner"><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord mathrm">1</span><span class="mbin">+</span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord textstyle cramped"><span class="mord mathit">n</span></span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord textstyle uncramped"><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="vlist"><span style="top:-1.064em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">n</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit">e</span></span></span></span></span></p>
+<h2 id="html-与详情折叠"><a class="markdownIt-Anchor" href="#html-与详情折叠">#</a> HTML 与详情折叠</h2>
+<p>主题允许在 Markdown 中使用 HTML。下面的键盘按键、下划线、标记文本和折叠区域用于检查原生 HTML：</p>
+<p>HTML 段落：<u>下划线</u>、<mark>标记</mark>、<small>小号文字</small>、<del>删除内容</del>。</p>
+<p>按下 <kbd>Ctrl</kbd> + <kbd>C</kbd> 复制，按下 <kbd>⌘</kbd> + <kbd>V</kbd> 粘贴。</p>
+<details>
+<summary>点击展开更多测试内容</summary>
+<p>这里是折叠区域中的内容。它可以包含段落、列表和代码：</p>
+<ul>
+<li>折叠内容第一项</li>
+<li>折叠内容第二项</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">details / summary<br></code></pre></td></tr></table></figure>
+</details>
+<h2 id="扩展语法"><a class="markdownIt-Anchor" href="#扩展语法">#</a> 扩展语法</h2>
+<h3 id="定义列表"><a class="markdownIt-Anchor" href="#定义列表">#</a> 定义列表</h3>
+<dl>
+<dt>Markdown</dt>
+<dd>一种轻量级标记语言。</dd>
+<dt>Hexo</dt>
+<dd>一个快速、简洁且高效的博客框架。</dd>
+</dl>
+<h3 id="脚注"><a class="markdownIt-Anchor" href="#脚注">#</a> 脚注</h3>
+<p>这是带脚注的句子<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，这里还有第二个脚注<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>。</p>
+<h3 id="上标-下标-插入和高亮"><a class="markdownIt-Anchor" href="#上标-下标-插入和高亮">#</a> 上标、下标、插入和高亮</h3>
+<p>水的化学式是 H<sub>2</sub>O，平方写作 x<sup>2</sup>。这是 <ins>插入内容</ins>，这是 <mark>高亮内容</mark>。</p>
+<h3 id="长文本与中文标点"><a class="markdownIt-Anchor" href="#长文本与中文标点">#</a> 长文本与中文标点</h3>
+<p>最后放一段较长文字，用于观察文章宽度、换行、标点和中英文混排：在实际的研究记录中，一篇文章可能同时包含背景介绍、方法说明、实验配置、代码片段、公式推导、图片、表格以及音频素材。一个稳定的文章页面需要在桌面端和移动端都保持清晰的层级，让读者能够快速定位信息，也让作者可以在后续迭代中方便地比较改动前后的效果。</p>
+<hr>
+<p>测试文章结束。后续如果新增组件或语法，可以继续把最小示例补充到这里。</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>当前项目使用 multi-markdown-it 渲染 Markdown，并开启了多项 markdown-it 插件。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>本地音乐播放器使用浏览器原生 HTML5 audio 元素，不需要额外的音乐平台接口。 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B5%8B%E8%AF%95/" class="category-chain-item">测试</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Markdown/" class="print-no-link">#Markdown</a>
+      
+        <a href="/tags/Hexo/" class="print-no-link">#Hexo</a>
+      
+        <a href="/tags/%E6%B5%8B%E8%AF%95/" class="print-no-link">#测试</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Markdown / Hexo 全格式测试</div>
+      <div>https://ablingss.github.io/2020/01/01/2020-01-01-markdown-hexo-format-test/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ABLingss</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年1月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/06/2024-10-06-HowToDebate/" title="怎么打辩论">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">怎么打辩论</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://ablingss.github.io" target="_blank" rel="nofollow noopener"><span>Home</span></a> <span>&nbsp;|&nbsp;</span> <a href="https://github.com/ABLingss" target="_blank" rel="nofollow noopener"><span>GitHub</span></a> <i class="iconfont icon-love"></i> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
